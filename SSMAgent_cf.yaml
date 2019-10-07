@@ -1,0 +1,174 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: Template to create SSM Agent Update Maintenace Window, Targets and Tasks. Use Default Values for quick completion - Add your own values for customization.
+Parameters:
+  MaintenanceWindowName:
+    Description: Maintenace Window Name
+    Type: String
+  MaintenanceWindowDescription:
+    Description: Sample - Weekly (WED) Maintenance Window to update SSM Agent
+    Type: String
+    MaxLength: '128'
+  MainteanceWindowTimezone:
+    Description: Timezone for schedule (AWS will convert to UTC)
+    Type: String
+    Default: US/Pacific
+  MaintenanceWindowDuration:
+    Description: How many hours the maintenance window will run from start Timezone (1-4 hrs)
+    Type: Number
+    Default: 3
+    MinValue: 1
+    MaxValue: 4
+  MaintenanceWindowCutoff:
+    Description: How many hours before maintenance window end will new jobs not start (1-2 hrs)
+    Type: Number
+    Default: 1
+    MinValue: 1
+    MaxValue: 2
+  MaintenanceWindowSchedule:
+    Description: Cron/Rate expression for schedule - Sample - cron(0 0 23 ? * WED *)
+    Type: String
+    Default: cron(0 0 23 ? * WED *)
+  MaintenanceTargetName:
+    Description: Maintenace Target Name (No Spaces)
+    Type: String
+  MaintenanceTargetDescription:
+    Description: Sample - UAT Servers
+    Type: String
+    MaxLength: '128'
+  MaintenanceTargetTarget:
+    Description: Tag Key should equal 'AgentUpdate'
+    Type: String
+    Default: 'tag:AgentUpdate'
+  MaintenaneTargetKeyValue:
+    Description: True or False
+    Type: String
+    Default: True
+    AllowedValues:
+      - True
+      - False
+  MaintenanceWindowStepFunctionsTaskName:
+    Description: Maintenace Window Task Name (No Spaces)
+    Type: String
+  MaintenanceWindowStepFunctionsTaskPriority:
+    Description: Job Priority - Number 0 - 5
+    Type: Number
+    Default: 1
+    MinValue: 0
+    MaxValue: 5
+  MaintenanceWindowStepFunctionsTaskMaxConcurrency:
+    Description: Integer or Percentage
+    Type: String
+    Default: 50%
+    AllowedPattern: ^([1-9][0-9]*|[1-9][0-9]%|[1-9]%|100%)$
+  MaintenanceWindowStepFunctionsTaskMaxErrors:
+    Description: Integer or Percentage
+    Type: String
+    Default: 25%
+    AllowedPattern: ^([1-9][0-9]*|[1-9][0-9]%|[1-9]%|100%)$
+  MaintenanceServiceRoleArn:
+    Description: The ARN of the IAM service role to use to publish Amazon Simple Notification Service (Amazon SNS) notifications for maintenance window Run Command tasks.
+    Type: String
+    Default: arn:aws:iam::{AccountId}:role/aws-service-role/ssm.amazonaws.com/AWSServiceRoleForAmazonSSM
+
+Resources:
+  MaintenanceWindow:
+    Type: 'AWS::SSM::MaintenanceWindow'
+    Properties:
+      AllowUnassociatedTargets: false
+      Cutoff: !Ref MaintenanceWindowCutoff
+      Description: !Ref MaintenanceWindowDescription
+      Duration: !Ref MaintenanceWindowDuration
+      Name: !Ref MaintenanceWindowName
+      Schedule: !Ref MaintenanceWindowSchedule
+      ScheduleTimezone: !Ref MainteanceWindowTimezone
+  MaintenanceWindowTarget:
+    Type: 'AWS::SSM::MaintenanceWindowTarget'
+    Properties:
+      WindowId: !Ref MaintenanceWindow
+      ResourceType: INSTANCE
+      Targets:
+        - Key: !Ref MaintenanceTargetTarget
+          Values: !Ref MaintenaneTargetKeyValue
+      Name: !Ref MaintenanceTargetName
+      Description: !Ref MaintenanceTargetDescription
+  MaintenanceWindowStepFunctionsTask:
+    Type: 'AWS::SSM::MaintenanceWindowTask'
+    Properties:
+      WindowId: !Ref MaintenanceWindow
+      Targets:
+        - Key: WindowTargetIds
+          Values:
+            - !Ref MaintenanceWindowTarget
+      TaskArn: AWS-UpdateSSMAgent
+      ServiceRoleArn: !Ref MaintenanceServiceRoleArn
+      TaskType: STEP_FUNCTIONS
+      TaskInvocationParameters:
+        MaintenanceWindowStepFunctionsParameters:
+          Input: '{"instanceId": "{{TARGET_ID}}", "wait_time": 20}'
+          Name: '{{INVOCATION_ID}}'
+      Priority: !Ref MaintenanceWindowStepFunctionsTaskPriority
+      MaxConcurrency: !Ref MaintenanceWindowStepFunctionsTaskMaxConcurrency
+      MaxErrors: !Ref MaintenanceWindowStepFunctionsTaskMaxErrors
+      Name: !Ref MaintenanceWindowStepFunctionsTaskName
+
+Metadata:
+  AWS::CloudFormation::Interface:
+    ParameterGroups:
+      -
+        Label:
+          default: "Maintenance Window Configuration"
+        Parameters:
+          - MaintenanceWindowName
+          - MaintenanceWindowDescription
+          - MaintenanceWindowSchedule
+          - MaintenanceWindowDuration
+          - MaintenanceWindowCutoff
+          - MainteanceWindowTimezone
+      -
+        Label:
+          default: "Maintenance Target Configuration"
+        Parameters:
+          - MaintenanceTargetName
+          - MaintenanceTargetDescription
+          - MaintenanceTargetTarget
+          - MaintenaneTargetKeyValue
+      -
+        Label:
+          default: "Maintenance Target Step Function Configuration"
+        Parameters:
+          - MaintenanceWindowStepFunctionsTaskName
+          - MaintenanceWindowStepFunctionsTaskPriority
+          - MaintenanceWindowStepFunctionsTaskMaxConcurrency
+          - MaintenanceWindowStepFunctionsTaskMaxErrors
+          - MaintenanceServiceRoleArn
+    ParameterLabels:
+      MaintenanceWindowName:
+        default: "Maintenance Window Name (lowecase, no spaces)"
+      MaintenanceWindowDescription:
+        default: "Maintenance Window Description (128 char max)"
+      MainteanceWindowTimezone:
+        default: "Timezone format as found here: https://docs.aws.amazon.com/redshift/latest/dg/time-zone-names.html"
+      MaintenanceWindowDuration:
+        default: "Maintenance Window Duration (in hours)"
+      MaintenanceWindowCutoff:
+        default: "Maintenance Window Cutoff (in hours before window closes)"
+      MaintenanceWindowSchedule:
+        default: "Maintenance Window Schedule"
+      MaintenanceTargetName:
+        default: "Maintenance Target Config Name (lowercase, no spaces)"
+      MaintenanceTargetDescription:
+        default: "Maintenance Target Config Description (128 char max)"
+      MaintenanceTargetTarget:
+        default: "Maintenance Target Tag Key (format: tag:{keyName})"
+      MaintenaneTargetKeyValue:
+        default: "Maintenance Tarket Key Value"
+      MaintenanceWindowStepFunctionsTaskName:
+        default: "Step Function Name (lowercase, no spaces)"
+      MaintenanceWindowStepFunctionsTaskPriority:
+        default: "Step Function Task Priority"      
+      MaintenanceWindowStepFunctionsTaskMaxConcurrency:
+        default: "Step Function Max Concurrency"
+      MaintenanceWindowStepFunctionsTaskMaxErrors:
+        default: "Step Function Max Error Rate" 
+      MaintenanceServiceRoleArn:
+        default: "Step Function IAM Service Role ARN"      
