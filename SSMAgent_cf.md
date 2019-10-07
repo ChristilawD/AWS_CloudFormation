@@ -11,7 +11,10 @@ Thew following work will need to be completed to be able to use this template:
 * Suggested Key is: AgentUpdate
 * Suggested Value: True
 * Allowed Values: True or Fase
-*            This is hard coded into the template and can be modified as needed
+*            This is hard coded into the template and can be modified as needed - Just remove lines 46-48
+*            AllowedValues:
+             - True
+             - False
 * Run Command IAM Service Role ARN
 * If you have not created a specific Role for this work, the default is:
 *            arn:aws:iam::{AccountId}:role/aws-service-role/ssm.amazonaws.com/AWSServiceRoleForAmazonSSM
