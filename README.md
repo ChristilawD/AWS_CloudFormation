@@ -16,7 +16,7 @@ I will work to document these as well as I can, but please feel free to use thes
 
 ## SSMAgent_cf.yaml
 
-This template was built to help automate (to a degree) the creation of a Systems Manager maintenace window and jobs to update the SSM agent installed on variuos machines. This template should work in Windows and Linux distro's, but only tested on Windows. The Dpocument used to build this schedule is an AWS Supplied Document that work with both platforms.
+This template was built to help automate (to a degree) the creation of a Systems Manager Maintenace Window and jobs to update the SSM Agents installed on variuos machines. This template should work in Windows and Linux distro's, but only tested on Windows. The Document used to build this schedule is an AWS Supplied Document that work with both platforms.
 
 ### Current Issues
 
