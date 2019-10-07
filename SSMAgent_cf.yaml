@@ -38,7 +38,7 @@ Parameters:
   MaintenanceTargetTarget:
     Description: Tag Key should equal 'AgentUpdate'
     Type: String
-    Default: 'tag:AgentUpdate'
+    Default: tag:AgentUpdate
   MaintenaneTargetKeyValue:
     Description: True or False
     Type: String
@@ -84,13 +84,14 @@ Resources:
   MaintenanceWindowTarget:
     Type: 'AWS::SSM::MaintenanceWindowTarget'
     Properties:
+      Name: !Ref MaintenanceTargetName
+      Description: !Ref MaintenanceTargetDescription
       WindowId: !Ref MaintenanceWindow
       ResourceType: INSTANCE
       Targets:
         - Key: !Ref MaintenanceTargetTarget
-          Values: !Ref MaintenaneTargetKeyValue
-      Name: !Ref MaintenanceTargetName
-      Description: !Ref MaintenanceTargetDescription
+          Values: 
+          - !Ref MaintenaneTargetKeyValue
   MaintenanceWindowStepFunctionsTask:
     Type: 'AWS::SSM::MaintenanceWindowTask'
     Properties:
