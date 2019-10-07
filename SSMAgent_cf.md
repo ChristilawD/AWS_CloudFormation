@@ -53,7 +53,7 @@ Thew following work will need to be completed to be able to use this template:
 *        For this template, the only value is True or False
             Case Sensitive
 
-## aMaintenance Run Command Configuration
+## Maintenance Run Command Configuration
 
 * Run Command Name (lowercase, no spaces)
 * Run Command Task Priority
