@@ -16,7 +16,7 @@ If you are going to remove Optional items from the template, be sure you remove 
 
 # Templates
 
-## SSMAgent_cf.yaml - Tested and Validated - MarkDown greated and committed
+## SSMAgent_cf.yaml - Tested and Validated - MarkDown created and committed
 
 This template was built to help automate (to a degree) the creation of a Systems Manager Maintenace Window and jobs to update the SSM Agents installed on variuos machines. This template should work in Windows and Linux distro's, but only tested on Windows. The Document used to build this schedule is an AWS Supplied Document that works with both platforms.
 
