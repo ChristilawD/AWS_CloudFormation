@@ -16,9 +16,12 @@ Thew following work will need to be completed to be able to use this template:
 * If you have not created a specific Role for this work, the default is:
 *            arn:aws:iam::{AccountId}:role/aws-service-role/ssm.amazonaws.com/AWSServiceRoleForAmazonSSM
             Modify the {AccountID} to match your Account ID, you can find this in IAM in the upper left corner as soon as you enter the IAM Console (sample below)
-                Finding your account ID
-            AWS CLi
-                aws sts get-caller-identity
+* Finding your account ID (Console)
+
+![Console AccountId](/images/account-id-iam-console.png)
+
+* Finding your account ID (AWS CLi)
+*                aws sts get-caller-identity
 * ARN of the SNS Topic to send notifications through (Optional, can be removed if no notification is needed)
 *        In order to get notifications (email, sms or other), you will need to create/use a topic, obtain the ARN and enter it here
 * S3 Bucket Name to store logs / S3 Bucket prefix to assign logs for this job (Optional, can be removed if no notification is needed)
