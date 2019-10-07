@@ -1,5 +1,5 @@
 AWSTemplateFormatVersion: 2010-09-09
-Description: Template to create Server Patching Maintenace Window, Targets and Tasks. Use Default Values for quick completion - Add your own values for customization.
+Description: Template to create Server Patching Maintenace Window (Windows Platform), Targets and Tasks. Use Default Values for quick completion - Add your own values for customization.
 Parameters:
   MaintenanceWindowName:
     Description: Maintenace Window Name
