@@ -8,7 +8,7 @@ All of these templates will come in YAML format, feel free to convert as needed.
 Please feel free to open issues for questions or issues that come up using these. I will work to fix them as time allows.
 
 ## Documentation
-I will work to document these as well as I can, but please feel free to use these as needed. I will work to include a MarkDown file for each tempalte that expands on some information needed to successfully use them.
+I will work to document these as well as I can, but please feel free to use these as needed. I will work to include a MarkDown file for each template that expands on some information needed to successfully use them.
 
 # Note on Optional Items
 
@@ -18,7 +18,7 @@ If you are going to remove Optional items from the template, be sure you remove 
 
 ## SSMAgent_cf.yaml - Validated and Tested - MarkDown created and committed
 
-This template was built to help automate (to a degree) the creation of a Systems Manager Maintenace Window and jobs to update the SSM Agents installed on variuos machines. This template should work in Windows and Linux distro's, but only tested on Windows. The Document used to build this schedule is an AWS Supplied Document that works with both platforms.
+This template was built to help automate (to a degree) the creation of a Systems Manager Maintenace Window and jobs to update the SSM Agents installed on variuos machines. This template should work in Windows and Linux distro's, but only tested on Windows. The Run Command Document used to build this schedule is an AWS Supplied Document that works with both platforms.
 
 ### Current Issues
 
@@ -26,7 +26,7 @@ This template was built to help automate (to a degree) the creation of a Systems
 
 ## WindowsServerPatching_cf.yaml - Validated and Untested - MarkDown in progress
 
-This is specific for Windows Server Patching as thge Run Command that is invoked here is specific to Windows Patching. The Document used to build this schedule is an AWS Supplied Document that works with the Windows platforms.
+This is specific for Windows Server Patching as the Run Command that is invoked here is specific to Windows Patching. The Run Command Document used to build this schedule is an AWS Supplied Document that works with the Windows platform.
 
 ### Current Issues
 
