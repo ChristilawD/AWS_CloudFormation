@@ -9,7 +9,7 @@ Parameters:
     Type: String
     MaxLength: '128'
   MainteanceWindowTimezone:
-    Description: Timezone for schedule (AWS will convert to UTC)
+    Description: Timezone for schedule (AWS will convert to UTC) (Optional, can be removed, WIll default to UTC)
     Type: String
     Default: US/Pacific
   MaintenanceWindowDuration:
@@ -19,7 +19,7 @@ Parameters:
     MinValue: 1
     MaxValue: 4
   MaintenanceWindowCutoff:
-    Description: How many hours before maintenance window end will new jobs not start (1-2 hrs)
+    Description: How many hours before maintenance window end will new jobs not start (1-2 hrs) (Optional, can be removed)
     Type: Number
     Default: 1
     MinValue: 1
@@ -47,13 +47,13 @@ Parameters:
       - True
       - False
   MaintenanceTargetSNSARN:
-    Description: ARN of the SNS Topic for notifications
+    Description: ARN of the SNS Topic for notifications (Optional, can be removed)
     Type: String
   MaintenanceTargetS3Bucket:
-    Description: ARN of the S3 Bucket to send logs too
+    Description: ARN of the S3 Bucket to send logs too (Optional, can be removed)
     Type: String
   MaintenanceTargetS3BucketPrefix:
-    Description: The Amazon S3 bucket subfolder
+    Description: The Amazon S3 bucket subfolder (Optional, can be removed)
     Type: String
   MaintenanceWindowRunCommandTaskName:
     Description: Maintenace Window Task Name (No Spaces)
