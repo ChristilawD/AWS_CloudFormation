@@ -46,21 +46,30 @@ Parameters:
     AllowedValues:
       - True
       - False
-  MaintenanceWindowStepFunctionsTaskName:
+  MaintenanceTargetSNSARN:
+    Description: ARN of the SNS Topic for notifications
+    Type: String
+  MaintenanceTargetS3Bucket:
+    Description: ARN of the S3 Bucket to send logs too
+    Type: String
+  MaintenanceTargetS3BucketPrefix:
+    Description: The Amazon S3 bucket subfolder
+    Type: String
+  MaintenanceWindowRunCommandTaskName:
     Description: Maintenace Window Task Name (No Spaces)
     Type: String
-  MaintenanceWindowStepFunctionsTaskPriority:
+  MaintenanceWindowRunCommandTaskPriority:
     Description: Job Priority - Number 0 - 5
     Type: Number
     Default: 1
     MinValue: 0
     MaxValue: 5
-  MaintenanceWindowStepFunctionsTaskMaxConcurrency:
+  MaintenanceWindowRunCommandTaskMaxConcurrency:
     Description: Integer or Percentage
     Type: String
     Default: 50%
     AllowedPattern: ^([1-9][0-9]*|[1-9][0-9]%|[1-9]%|100%)$
-  MaintenanceWindowStepFunctionsTaskMaxErrors:
+  MaintenanceWindowRunCommandTaskMaxErrors:
     Description: Integer or Percentage
     Type: String
     Default: 25%
@@ -92,7 +101,7 @@ Resources:
         - Key: !Ref MaintenanceTargetTarget
           Values: 
           - !Ref MaintenaneTargetKeyValue
-  MaintenanceWindowStepFunctionsTask:
+  MaintenanceWindowRunCommandTask:
     Type: 'AWS::SSM::MaintenanceWindowTask'
     Properties:
       WindowId: !Ref MaintenanceWindow
@@ -102,15 +111,19 @@ Resources:
             - !Ref MaintenanceWindowTarget
       TaskArn: AWS-UpdateSSMAgent
       ServiceRoleArn: !Ref MaintenanceServiceRoleArn
-      TaskType: STEP_FUNCTIONS
-      TaskInvocationParameters:
-        MaintenanceWindowStepFunctionsParameters:
-          Input: '{"instanceId": "{{TARGET_ID}}", "wait_time": 20}'
-          Name: '{{INVOCATION_ID}}'
-      Priority: !Ref MaintenanceWindowStepFunctionsTaskPriority
-      MaxConcurrency: !Ref MaintenanceWindowStepFunctionsTaskMaxConcurrency
-      MaxErrors: !Ref MaintenanceWindowStepFunctionsTaskMaxErrors
-      Name: !Ref MaintenanceWindowStepFunctionsTaskName
+      TaskType: RUN_COMMAND
+      DocumentHash: 53c06c366cf29363cdbd1c9bb6b8cf212b9172a14e763b37036c281c8880c063
+      DocumentHashType: Sha256
+      NotificationConfig:
+        NotificationArn: !Ref MaintenanceTargetSNSARN
+        NotificationEvents: All
+        NotificationType: Command
+      OutputS3BucketName: !Ref MaintenanceTargetS3Bucket
+      OutputS3KeyPrefix: !Ref MaintenanceTargetS3BucketPrefix
+      Priority: !Ref MaintenanceWindowRunCommandTaskPriority
+      MaxConcurrency: !Ref MaintenanceWindowRunCommandTaskMaxConcurrency
+      MaxErrors: !Ref MaintenanceWindowRunCommandTaskMaxErrors
+      Name: !Ref MaintenanceWindowRunCommandTaskName
 
 Metadata:
   AWS::CloudFormation::Interface:
@@ -135,13 +148,16 @@ Metadata:
           - MaintenaneTargetKeyValue
       -
         Label:
-          default: "Maintenance Target Step Function Configuration"
+          default: "Maintenance Target Run Command Configuration"
         Parameters:
-          - MaintenanceWindowStepFunctionsTaskName
-          - MaintenanceWindowStepFunctionsTaskPriority
-          - MaintenanceWindowStepFunctionsTaskMaxConcurrency
-          - MaintenanceWindowStepFunctionsTaskMaxErrors
+          - MaintenanceWindowRunCommandTaskName
+          - MaintenanceWindowRunCommandTaskPriority
+          - MaintenanceWindowRunCommandTaskMaxConcurrency
+          - MaintenanceWindowRunCommandTaskMaxErrors
           - MaintenanceServiceRoleArn
+          - MaintenanceTargetSNSARN
+          - MaintenanceTargetS3Bucket
+          - MaintenanceTargetS3BucketPrefix
     ParameterLabels:
       MaintenanceWindowName:
         default: "Maintenance Window Name (lowecase, no spaces)"
@@ -163,13 +179,19 @@ Metadata:
         default: "Maintenance Target Tag Key (format: tag:{keyName})"
       MaintenaneTargetKeyValue:
         default: "Maintenance Tarket Key Value"
-      MaintenanceWindowStepFunctionsTaskName:
-        default: "Step Function Name (lowercase, no spaces)"
-      MaintenanceWindowStepFunctionsTaskPriority:
-        default: "Step Function Task Priority"      
-      MaintenanceWindowStepFunctionsTaskMaxConcurrency:
-        default: "Step Function Max Concurrency"
-      MaintenanceWindowStepFunctionsTaskMaxErrors:
-        default: "Step Function Max Error Rate" 
+      MaintenanceWindowRunCommandTaskName:
+        default: "Run Command Name (lowercase, no spaces)"
+      MaintenanceWindowRunCommandTaskPriority:
+        default: "Run Command Task Priority"      
+      MaintenanceWindowRunCommandTaskMaxConcurrency:
+        default: "Run Command Max Concurrency"
+      MaintenanceWindowRunCommandTaskMaxErrors:
+        default: "Run Command Max Error Rate" 
       MaintenanceServiceRoleArn:
-        default: "Step Function IAM Service Role ARN"      
+        default: "Run Command IAM Service Role ARN"      
+      MaintenanceTargetSNSARN:
+        default: "ARN of the SNS Topic to send notifications through"
+      MaintenanceTargetS3Bucket:
+        default: S3 Bucket Name to store logs
+      MaintenanceTargetS3BucketPrefix:
+        default: S3 Bucket prefix to assign logs for this job
