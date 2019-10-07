@@ -1,16 +1,14 @@
 # AWS_CloudFormation
 Various AWS CloudFormation Scripts that I have created.
 
-I am crewating this repor because I am having a very hard time finding CF Templates for some "edge case" templates that aren't as popular and used as much.
+I am creating this repo because I am having a very hard time finding CF Templates for some "edge case" templates that aren't as popular and used as much.
 
 All of these templates will come in YAML format, feel free to convert as needed.
 
-AWS Supplied Documents are used for all of these jobs. Notes will be added if/when custom documents are used (and they will be supplied).
-
-Please feel free to open issues for questions or issues that come up using these.
+Please feel free to open issues for questions or issues that come up using these. I will work to fix them as time allows.
 
 ## Documentation
-I will work to document these as well as I can, but please feel free to use these as needed.
+I will work to document these as well as I can, but please feel free to use these as needed. I will work to include a MarkDown file for each tempalte that expands on some information needed to successfully use them.
 
 # Note on Optional Items
 
