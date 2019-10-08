@@ -25,6 +25,7 @@ This template was built to help automate (to a degree) the creation of a Systems
 ### Current Issues
 
 ~~SSMAgentcf.yaml - Failing on run #1~~ **Resolved**
+
 Template error when using S3 Logging section #2
 
 ## WindowsServerPatching_cf.yaml
