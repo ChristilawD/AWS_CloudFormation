@@ -28,7 +28,7 @@ This template was built to help automate (to a degree) the creation of a Systems
 
 ## WindowsServerPatching_cf.yaml
 #### Validated and Untested
-#### MarkDown in progress
+#### MarkDown created and committed
 
 This is specific for Windows Server Patching as the Run Command that is invoked here is specific to Windows Patching. The Run Command Document used to build this schedule is an AWS Supplied Document that works with the Windows platform.
 
