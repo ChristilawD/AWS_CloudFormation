@@ -1,0 +1,302 @@
+{
+    "AWSTemplateFormatVersion": "2010-09-09",
+    "Description": "Template to create Server Patching Maintenace Window (Windows Platform), Targets and Tasks. Use Default Values for quick completion - Add your own values for customization.",
+    "Parameters": {
+        "MaintenanceWindowName": {
+            "Description": "Maintenace Window Name",
+            "Type": "String"
+        },
+        "MaintenanceWindowDescription": {
+            "Description": "Sample - Monthly (Second THU of the month) Maintenance Window to Patch Servers (Windows)",
+            "Type": "String",
+            "MaxLength": "128"
+        },
+        "MainteanceWindowTimezone": {
+            "Description": "Timezone for schedule (AWS will convert to UTC) (Optional, can be removed, will default to UTC)",
+            "Type": "String",
+            "Default": "US/Pacific"
+        },
+        "MaintenanceWindowDuration": {
+            "Description": "How many hours the maintenance window will run from start Timezone (1-4 hrs)",
+            "Type": "Number",
+            "Default": 4,
+            "MinValue": 1,
+            "MaxValue": 4
+        },
+        "MaintenanceWindowCutoff": {
+            "Description": "How many hours before maintenance window end will new jobs not start (1-2 hrs) (Optional, can be removed)",
+            "Type": "Number",
+            "Default": 1,
+            "MinValue": 1,
+            "MaxValue": 2
+        },
+        "MaintenanceWindowSchedule": {
+            "Description": "Cron/Rate expression for schedule - Sample - cron(0 0 20 ? 1/1 5#2 *)",
+            "Type": "String",
+            "Default": "cron(0 0 20 ? 1/1 5#2 *)"
+        },
+        "MaintenanceTargetName": {
+            "Description": "Maintenace Target Name (No Spaces)",
+            "Type": "String"
+        },
+        "MaintenanceTargetDescription": {
+            "Description": "Sample - UAT Servers",
+            "Type": "String",
+            "MaxLength": "128"
+        },
+        "MaintenanceTargetTarget": {
+            "Description": "Tag Key should equal 'Patch Group'",
+            "Type": "String",
+            "Default": "tag:Patch Group"
+        },
+        "MaintenaneTargetKeyValue": {
+            "Description": "Tag Value Assigned",
+            "Type": "String",
+            "Default": "UAT-Group-01-THU-Patches"
+        },
+        "MaintenanceTargetSNSARN": {
+            "Description": "ARN of the SNS Topic for notifications (Optional, can be removed)",
+            "Type": "String"
+        },
+        "MaintenanceTargetS3Bucket": {
+            "Description": "Name of the S3 Bucket to send logs too (Optional, can be removed)",
+            "Type": "String"
+        },
+        "MaintenanceTargetS3BucketPrefix": {
+            "Description": "The Amazon S3 bucket subfolder (Optional, can be removed)",
+            "Type": "String"
+        },
+        "MaintenanceWindowRunCommandTaskName": {
+            "Description": "Maintenace Window Task Name (No Spaces)",
+            "Type": "String"
+        },
+        "MaintenanceWindowRunCommandTaskPriority": {
+            "Description": "Job Priority - Number 0 - 5",
+            "Type": "Number",
+            "Default": 1,
+            "MinValue": 0,
+            "MaxValue": 5
+        },
+        "MaintenanceWindowRunCommandTaskMaxConcurrency": {
+            "Description": "Integer or Percentage",
+            "Type": "String",
+            "Default": "50%",
+            "AllowedPattern": "^([1-9][0-9]*|[1-9][0-9]%|[1-9]%|100%)$"
+        },
+        "MaintenanceWindowRunCommandTaskMaxErrors": {
+            "Description": "Integer or Percentage",
+            "Type": "String",
+            "Default": "25%",
+            "AllowedPattern": "^([1-9][0-9]*|[1-9][0-9]%|[1-9]%|100%)$"
+        },
+        "MaintenanceServiceRoleArn": {
+            "Description": "The ARN of the IAM service role to use to publish Amazon Simple Notification Service (Amazon SNS) notifications for maintenance window Run Command tasks.",
+            "Type": "String",
+            "Default": "arn:aws:iam::{AccountId}:role/aws-service-role/ssm.amazonaws.com/AWSServiceRoleForAmazonSSM"
+        }
+    },
+    "Resources": {
+        "MaintenanceWindow": {
+            "Type": "AWS::SSM::MaintenanceWindow",
+            "Properties": {
+                "AllowUnassociatedTargets": false,
+                "Cutoff": {
+                    "Ref": "MaintenanceWindowCutoff"
+                },
+                "Description": {
+                    "Ref": "MaintenanceWindowDescription"
+                },
+                "Duration": {
+                    "Ref": "MaintenanceWindowDuration"
+                },
+                "Name": {
+                    "Ref": "MaintenanceWindowName"
+                },
+                "Schedule": {
+                    "Ref": "MaintenanceWindowSchedule"
+                },
+                "ScheduleTimezone": {
+                    "Ref": "MainteanceWindowTimezone"
+                }
+            }
+        },
+        "MaintenanceWindowTarget": {
+            "Type": "AWS::SSM::MaintenanceWindowTarget",
+            "Properties": {
+                "Name": {
+                    "Ref": "MaintenanceTargetName"
+                },
+                "Description": {
+                    "Ref": "MaintenanceTargetDescription"
+                },
+                "WindowId": {
+                    "Ref": "MaintenanceWindow"
+                },
+                "ResourceType": "INSTANCE",
+                "Targets": [
+                    {
+                        "Key": {
+                            "Ref": "MaintenanceTargetTarget"
+                        },
+                        "Values": [
+                            {
+                                "Ref": "MaintenaneTargetKeyValue"
+                            }
+                        ]
+                    }
+                ]
+            }
+        },
+        "MaintenanceWindowRunCommandTask": {
+            "Type": "AWS::SSM::MaintenanceWindowTask",
+            "Properties": {
+                "WindowId": {
+                    "Ref": "MaintenanceWindow"
+                },
+                "Targets": [
+                    {
+                        "Key": "WindowTargetIds",
+                        "Values": [
+                            {
+                                "Ref": "MaintenanceWindowTarget"
+                            }
+                        ]
+                    }
+                ],
+                "TaskArn": "AWS-RunPatchBaseline",
+                "ServiceRoleArn": {
+                    "Ref": "MaintenanceServiceRoleArn"
+                },
+                "TaskType": "RUN_COMMAND",
+                "DocumentHash": "81055008b10a82f678d4086d5b0a751093c9c9916571d61079b202dfec263db6",
+                "DocumentHashType": "Sha256",
+                "NotificationConfig": {
+                    "NotificationArn": {
+                        "Ref": "MaintenanceTargetSNSARN"
+                    },
+                    "NotificationEvents": "All",
+                    "NotificationType": "Command"
+                },
+                "OutputS3BucketName": {
+                    "Ref": "MaintenanceTargetS3Bucket"
+                },
+                "OutputS3KeyPrefix": {
+                    "Ref": "MaintenanceTargetS3BucketPrefix"
+                },
+                "Priority": {
+                    "Ref": "MaintenanceWindowRunCommandTaskPriority"
+                },
+                "MaxConcurrency": {
+                    "Ref": "MaintenanceWindowRunCommandTaskMaxConcurrency"
+                },
+                "MaxErrors": {
+                    "Ref": "MaintenanceWindowRunCommandTaskMaxErrors"
+                },
+                "Name": {
+                    "Ref": "MaintenanceWindowRunCommandTaskName"
+                }
+            }
+        }
+    },
+    "Metadata": {
+        "AWS::CloudFormation::Interface": {
+            "ParameterGroups": [
+                {
+                    "Label": {
+                        "default": "Maintenance Window Configuration"
+                    },
+                    "Parameters": [
+                        "MaintenanceWindowName",
+                        "MaintenanceWindowDescription",
+                        "MaintenanceWindowSchedule",
+                        "MaintenanceWindowDuration",
+                        "MaintenanceWindowCutoff",
+                        "MainteanceWindowTimezone"
+                    ]
+                },
+                {
+                    "Label": {
+                        "default": "Maintenance Target Configuration"
+                    },
+                    "Parameters": [
+                        "MaintenanceTargetName",
+                        "MaintenanceTargetDescription",
+                        "MaintenanceTargetTarget",
+                        "MaintenaneTargetKeyValue"
+                    ]
+                },
+                {
+                    "Label": {
+                        "default": "Maintenance Target Run Command Configuration"
+                    },
+                    "Parameters": [
+                        "MaintenanceWindowRunCommandTaskName",
+                        "MaintenanceWindowRunCommandTaskPriority",
+                        "MaintenanceWindowRunCommandTaskMaxConcurrency",
+                        "MaintenanceWindowRunCommandTaskMaxErrors",
+                        "MaintenanceServiceRoleArn",
+                        "MaintenanceTargetSNSARN",
+                        "MaintenanceTargetS3Bucket",
+                        "MaintenanceTargetS3BucketPrefix"
+                    ]
+                }
+            ],
+            "ParameterLabels": {
+                "MaintenanceWindowName": {
+                    "default": "Maintenance Window Name (lowecase, no spaces)"
+                },
+                "MaintenanceWindowDescription": {
+                    "default": "Maintenance Window Description (128 char max)"
+                },
+                "MainteanceWindowTimezone": {
+                    "default": "Timezone format as found here: https://docs.aws.amazon.com/redshift/latest/dg/time-zone-names.html"
+                },
+                "MaintenanceWindowDuration": {
+                    "default": "Maintenance Window Duration (in hours)"
+                },
+                "MaintenanceWindowCutoff": {
+                    "default": "Maintenance Window Cutoff (in hours before window closes)"
+                },
+                "MaintenanceWindowSchedule": {
+                    "default": "Maintenance Window Schedule"
+                },
+                "MaintenanceTargetName": {
+                    "default": "Maintenance Target Config Name (lowercase, no spaces)"
+                },
+                "MaintenanceTargetDescription": {
+                    "default": "Maintenance Target Config Description (128 char max)"
+                },
+                "MaintenanceTargetTarget": {
+                    "default": "Maintenance Target Tag Key (format: tag:{keyName})"
+                },
+                "MaintenaneTargetKeyValue": {
+                    "default": "Maintenance Tarket Key Value"
+                },
+                "MaintenanceWindowRunCommandTaskName": {
+                    "default": "Run Command Name (lowercase, no spaces)"
+                },
+                "MaintenanceWindowRunCommandTaskPriority": {
+                    "default": "Run Command Task Priority"
+                },
+                "MaintenanceWindowRunCommandTaskMaxConcurrency": {
+                    "default": "Run Command Max Concurrency"
+                },
+                "MaintenanceWindowRunCommandTaskMaxErrors": {
+                    "default": "Run Command Max Error Rate"
+                },
+                "MaintenanceServiceRoleArn": {
+                    "default": "Run Command IAM Service Role ARN"
+                },
+                "MaintenanceTargetSNSARN": {
+                    "default": "ARN of the SNS Topic to send notifications through"
+                },
+                "MaintenanceTargetS3Bucket": {
+                    "default": "S3 Bucket Name to store logs"
+                },
+                "MaintenanceTargetS3BucketPrefix": {
+                    "default": "S3 Bucket prefix to assign logs for this job"
+                }
+            }
+        }
+    }
+}
