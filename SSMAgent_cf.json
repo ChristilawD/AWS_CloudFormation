@@ -58,18 +58,6 @@
                 false
             ]
         },
-        "MaintenanceTargetSNSARN": {
-            "Description": "ARN of the SNS Topic for notifications (Optional, can be removed)",
-            "Type": "String"
-        },
-        "MaintenanceTargetS3Bucket": {
-            "Description": "Name of the S3 Bucket to send logs too (Optional, can be removed)",
-            "Type": "String"
-        },
-        "MaintenanceTargetS3BucketPrefix": {
-            "Description": "The Amazon S3 bucket subfolder (Optional, can be removed)",
-            "Type": "String"
-        },
         "MaintenanceWindowRunCommandTaskName": {
             "Description": "Maintenace Window Task Name (No Spaces)",
             "Type": "String"
@@ -97,6 +85,18 @@
             "Description": "The ARN of the IAM service role to use to publish Amazon Simple Notification Service (Amazon SNS) notifications for maintenance window Run Command tasks.",
             "Type": "String",
             "Default": "arn:aws:iam::{AccountId}:role/aws-service-role/ssm.amazonaws.com/AWSServiceRoleForAmazonSSM"
+        },
+        "MaintenanceTargetSNSARN": {
+            "Description": "ARN of the SNS Topic to send notifications through",
+            "Type": "String"
+        },
+        "MaintenanceRunCommandS3Bucket": {
+            "Description": "S3 Bucket Name (not ARN) where you want to store logs",
+            "Type": "String"
+        },
+        "MaintenanceRunCommandS3BucketPrefix": {
+            "Description": "S3 Sub-Bucket Name (not ARN) where you want to store logs",
+            "Type": "String"
         }
     },
     "Resources": {
@@ -159,7 +159,9 @@
                 },
                 "Targets": [
                     {
-                        "Key": "WindowTargetIds",
+                        "Key": {
+                            "Ref": "MaintenanceTargetTarget"
+                        },
                         "Values": [
                             {
                                 "Ref": "MaintenanceWindowTarget"
@@ -172,20 +174,26 @@
                     "Ref": "MaintenanceServiceRoleArn"
                 },
                 "TaskType": "RUN_COMMAND",
-                "DocumentHash": "53c06c366cf29363cdbd1c9bb6b8cf212b9172a14e763b37036c281c8880c063",
-                "DocumentHashType": "Sha256",
-                "NotificationConfig": {
-                    "NotificationArn": {
-                        "Ref": "MaintenanceTargetSNSARN"
-                    },
-                    "NotificationEvents": "All",
-                    "NotificationType": "Command"
-                },
-                "OutputS3BucketName": {
-                    "Ref": "MaintenanceTargetS3Bucket"
-                },
-                "OutputS3KeyPrefix": {
-                    "Ref": "MaintenanceTargetS3BucketPrefix"
+                "TaskInvocationParameters": {
+                    "MaintenanceWindowRunCommandParameters": {
+                        "DocumentHash": "53c06c366cf29363cdbd1c9bb6b8cf212b9172a14e763b37036c281c8880c063",
+                        "DocumentHashType": "Sha256",
+                        "NotificationConfig": {
+                            "NotificationArn": {
+                                "Ref": "MaintenanceTargetSNSARN"
+                            },
+                            "NotificationEvents": [
+                                "All"
+                            ],
+                            "NotificationType": "Command"
+                        },
+                        "OutputS3BucketName": {
+                            "Ref": "MaintenanceRunCommandS3Bucket"
+                        },
+                        "OutputS3KeyPrefix": {
+                            "Ref": "MaintenanceRunCommandS3BucketPrefix"
+                        }
+                    }
                 },
                 "Priority": {
                     "Ref": "MaintenanceWindowRunCommandTaskPriority"
@@ -240,8 +248,8 @@
                         "MaintenanceWindowRunCommandTaskMaxErrors",
                         "MaintenanceServiceRoleArn",
                         "MaintenanceTargetSNSARN",
-                        "MaintenanceTargetS3Bucket",
-                        "MaintenanceTargetS3BucketPrefix"
+                        "MaintenanceRunCommandS3Bucket",
+                        "MaintenanceRunCommandS3BucketPrefix"
                     ]
                 }
             ],
@@ -294,10 +302,10 @@
                 "MaintenanceTargetSNSARN": {
                     "default": "ARN of the SNS Topic to send notifications through"
                 },
-                "MaintenanceTargetS3Bucket": {
+                "MaintenanceRunCommandS3Bucket": {
                     "default": "S3 Bucket Name to store logs"
                 },
-                "MaintenanceTargetS3BucketPrefix": {
+                "MaintenanceRunCommandS3BucketPrefix": {
                     "default": "S3 Bucket prefix to assign logs for this job"
                 }
             }
