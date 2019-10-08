@@ -3,7 +3,7 @@ Various AWS CloudFormation Scripts that I have created.
 
 I am creating this repo because I am having a very hard time finding CF Templates for some "edge case" templates that aren't as popular and used as much.
 
-All of these templates will come in YAML format, feel free to convert as needed.
+All of these templates will come in YAML and JSON format, feel free to use either. All of these templates are originally written in YAML and then I work to convert them to JSON, if there are issue with the JSON version, please let me know, but I have better exposure to YAML.
 
 Please feel free to open issues for questions or issues that come up using these. I will work to fix them as time allows.
 
