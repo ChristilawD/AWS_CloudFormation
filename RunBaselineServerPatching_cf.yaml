@@ -102,7 +102,7 @@ Resources:
         - Key: WindowTargetIds
           Values:
             - !Ref MaintenanceWindowTarget
-      TaskArn: AWS-UpdateSSMAgent
+      TaskArn: AWS-RunPatchBaseline
       TaskType: RUN_COMMAND
       TaskInvocationParameters:
         MaintenanceWindowRunCommandParameters:
