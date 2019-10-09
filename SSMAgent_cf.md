@@ -68,10 +68,6 @@ Thew following work will need to be completed to be able to use this template:
 *           You can use an Integer or a Percent
 * Run Command Max Error Rate **(OPTIONAL)**
 *           You can use an Integer or a Percent
-* Run Command IAM Service Role ARN **(OPTIONAL)**
-*           The default value is:
-            arn:aws:iam::{AccountId}:role/aws-service-role/ssm.amazonaws.com/AWSServiceRoleForAmazonSSM
-            Update the {AccountId} with your actual AWS Account ID (see above to obtain this information)
 * ARN of the SNS Topic to send notifications through **(OPTIONAL)**
 *           Must be a VALID ARN
 * S3 Bucket Name to store logs **(OPTIONAL)**
