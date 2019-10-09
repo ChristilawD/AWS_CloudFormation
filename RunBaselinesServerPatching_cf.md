@@ -21,9 +21,6 @@ Thew following work will need to be completed to be able to use this template:
 * Suggested Value:
 *           This should be descriptive so users can understand which Patch Group servers belong too.
 * Run Command IAM Service Role ARN
-* If you have not created a specific Role for this work, the default is:
-*           arn:aws:iam::{AccountId}:role/aws-service-role/ssm.amazonaws.com/AWSServiceRoleForAmazonSSM
-            Modify the {AccountID} to match your Account ID, you can find this in IAM in the upper left corner as soon as you enter the IAM Console (sample below)
 * Finding your account ID (Console)
 
 ![Console AccountId](/images/account-id-iam-console.png)

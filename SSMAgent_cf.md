@@ -18,9 +18,6 @@ Thew following work will need to be completed to be able to use this template:
             - True
             - False
 * Run Command IAM Service Role ARN
-* If you have not created a specific Role for this work, the default is:
-*           arn:aws:iam::{AccountId}:role/aws-service-role/ssm.amazonaws.com/AWSServiceRoleForAmazonSSM
-            Modify the {AccountID} to match your Account ID, you can find this in IAM in the upper left corner as soon as you enter the IAM Console (sample below)
 * Finding your account ID (Console)
 
 ![Console AccountId](/images/account-id-iam-console.png)
@@ -37,7 +34,7 @@ Thew following work will need to be completed to be able to use this template:
 
 * Maintenance Window Name (lowecase, no spaces)
 * Maintenance Window Description (128 char max) **(OPTIONAL)**
-* Timezone format as found here: https://docs.aws.amazon.com/redshift/latest/dg/time-zone-names.html
+* Timezone format as found here: https://docs.aws.amazon.com/en_pv/redshift/latest/dg/time-zone-names.html
 *           Use the labels on the linked page to ensure the job will run without issues in the timezone you select
             AWS will automatically convert this to UTC
 * Maintenance Window Duration (in hours)
@@ -46,7 +43,7 @@ Thew following work will need to be completed to be able to use this template:
 * Maintenance Window Schedule
 *           Cron/Rate expression for schedule - Sample - cron(0 0 23 ? * WED *)
             This sample runs weekly, every Wed at 23:00 (11:00 pm)
-* Documentation located here: https://docs.aws.amazon.com/lambda/latest/dg/tutorial-scheduled-events-schedule-expressions.html
+* Documentation located here: https://docs.aws.amazon.com/en_pv/lambda/latest/dg/tutorial-scheduled-events-schedule-expressions.html
 
 ## Maintenance Target Configuration
 
