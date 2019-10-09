@@ -1,21 +1,21 @@
 AWSTemplateFormatVersion: 2010-09-09
-Description: Template to create Server Patching Maintenace Window (Windows Platform), Targets and Tasks. Use Default Values for quick completion - Add your own values for customization.
+Description: Template to create Windows Server Patching Maintenace Window, Targets and Tasks. Use Default Values for quick completion - Add your own values for customization.
 Parameters:
   MaintenanceWindowName:
     Description: Maintenace Window Name
     Type: String
   MaintenanceWindowDescription:
-    Description: Sample - Monthly (Second THU of the month) Maintenance Window to Patch Servers (Windows)
+    Description: Sample - Second THU of the month Windows Server Patching
     Type: String
     MaxLength: '128'
   MainteanceWindowTimezone:
-    Description: Timezone for schedule (AWS will convert to UTC) (Optional, can be removed, will default to UTC)
+    Description: Timezone for schedule (AWS will convert to UTC) (Optional, can be removed, WIll default to UTC)
     Type: String
     Default: US/Pacific
   MaintenanceWindowDuration:
     Description: How many hours the maintenance window will run from start Timezone (1-4 hrs)
     Type: Number
-    Default: 4
+    Default: 3
     MinValue: 1
     MaxValue: 4
   MaintenanceWindowCutoff:
@@ -32,7 +32,7 @@ Parameters:
     Description: Maintenace Target Name (No Spaces)
     Type: String
   MaintenanceTargetDescription:
-    Description: Sample - UAT Servers
+    Description: Sample - UAT Server Patching
     Type: String
     MaxLength: '128'
   MaintenanceTargetTarget:
@@ -40,18 +40,9 @@ Parameters:
     Type: String
     Default: tag:Patch Group
   MaintenaneTargetKeyValue:
-    Description: Tag Value Assigned
+    Description: Tag Value for Patch Group - Example -  UAT-Group-01-THU-Patches
     Type: String
     Default: UAT-Group-01-THU-Patches
-  MaintenanceTargetSNSARN:
-    Description: ARN of the SNS Topic for notifications (Optional, can be removed)
-    Type: String
-  MaintenanceTargetS3Bucket:
-    Description: Name of the S3 Bucket to send logs too (Optional, can be removed)
-    Type: String
-  MaintenanceTargetS3BucketPrefix:
-    Description: The Amazon S3 bucket subfolder (Optional, can be removed)
-    Type: String
   MaintenanceWindowRunCommandTaskName:
     Description: Maintenace Window Task Name (No Spaces)
     Type: String
@@ -71,10 +62,15 @@ Parameters:
     Type: String
     Default: 25%
     AllowedPattern: ^([1-9][0-9]*|[1-9][0-9]%|[1-9]%|100%)$
-  MaintenanceServiceRoleArn:
-    Description: The ARN of the IAM service role to use to publish Amazon Simple Notification Service (Amazon SNS) notifications for maintenance window Run Command tasks.
+  MaintenanceTargetSNSARN:
+    Description: ARN of the SNS Topic to send notifications through
     Type: String
-    Default: arn:aws:iam::{AccountId}:role/aws-service-role/ssm.amazonaws.com/AWSServiceRoleForAmazonSSM
+  MaintenanceRunCommandS3Bucket:
+    Description: S3 Bucket Name (not ARN) where you want to store logs
+    Type: String
+  MaintenanceRunCommandS3BucketPrefix:
+    Description: S3 Sub-Bucket Name (not ARN) where you want to store logs
+    Type: String
 
 Resources:
   MaintenanceWindow:
@@ -93,7 +89,7 @@ Resources:
       Name: !Ref MaintenanceTargetName
       Description: !Ref MaintenanceTargetDescription
       WindowId: !Ref MaintenanceWindow
-      ResourceType: INSTANCE
+      ResourceType: 'INSTANCE'
       Targets:
         - Key: !Ref MaintenanceTargetTarget
           Values: 
@@ -106,17 +102,19 @@ Resources:
         - Key: WindowTargetIds
           Values:
             - !Ref MaintenanceWindowTarget
-      TaskArn: AWS-RunPatchBaseline
-      ServiceRoleArn: !Ref MaintenanceServiceRoleArn
+      TaskArn: AWS-UpdateSSMAgent
       TaskType: RUN_COMMAND
-      DocumentHash: 81055008b10a82f678d4086d5b0a751093c9c9916571d61079b202dfec263db6
-      DocumentHashType: Sha256
-      NotificationConfig:
-        NotificationArn: !Ref MaintenanceTargetSNSARN
-        NotificationEvents: All
-        NotificationType: Command
-      OutputS3BucketName: !Ref MaintenanceTargetS3Bucket
-      OutputS3KeyPrefix: !Ref MaintenanceTargetS3BucketPrefix
+      TaskInvocationParameters:
+        MaintenanceWindowRunCommandParameters:
+          DocumentHash: 53c06c366cf29363cdbd1c9bb6b8cf212b9172a14e763b37036c281c8880c063
+          DocumentHashType: Sha256
+          NotificationConfig:
+            NotificationArn: !Ref MaintenanceTargetSNSARN
+            NotificationEvents: 
+              - All
+            NotificationType: Command
+          OutputS3BucketName: !Ref MaintenanceRunCommandS3Bucket
+          OutputS3KeyPrefix: !Ref MaintenanceRunCommandS3BucketPrefix
       Priority: !Ref MaintenanceWindowRunCommandTaskPriority
       MaxConcurrency: !Ref MaintenanceWindowRunCommandTaskMaxConcurrency
       MaxErrors: !Ref MaintenanceWindowRunCommandTaskMaxErrors
@@ -151,10 +149,9 @@ Metadata:
           - MaintenanceWindowRunCommandTaskPriority
           - MaintenanceWindowRunCommandTaskMaxConcurrency
           - MaintenanceWindowRunCommandTaskMaxErrors
-          - MaintenanceServiceRoleArn
           - MaintenanceTargetSNSARN
-          - MaintenanceTargetS3Bucket
-          - MaintenanceTargetS3BucketPrefix
+          - MaintenanceRunCommandS3Bucket
+          - MaintenanceRunCommandS3BucketPrefix
     ParameterLabels:
       MaintenanceWindowName:
         default: "Maintenance Window Name (lowecase, no spaces)"
@@ -175,7 +172,7 @@ Metadata:
       MaintenanceTargetTarget:
         default: "Maintenance Target Tag Key (format: tag:{keyName})"
       MaintenaneTargetKeyValue:
-        default: "Maintenance Tarket Key Value"
+        default: "Maintenance Target Key Value"
       MaintenanceWindowRunCommandTaskName:
         default: "Run Command Name (lowercase, no spaces)"
       MaintenanceWindowRunCommandTaskPriority:
@@ -184,11 +181,9 @@ Metadata:
         default: "Run Command Max Concurrency"
       MaintenanceWindowRunCommandTaskMaxErrors:
         default: "Run Command Max Error Rate" 
-      MaintenanceServiceRoleArn:
-        default: "Run Command IAM Service Role ARN"      
       MaintenanceTargetSNSARN:
         default: "ARN of the SNS Topic to send notifications through"
-      MaintenanceTargetS3Bucket:
+      MaintenanceRunCommandS3Bucket:
         default: S3 Bucket Name to store logs
-      MaintenanceTargetS3BucketPrefix:
+      MaintenanceRunCommandS3BucketPrefix:
         default: S3 Bucket prefix to assign logs for this job

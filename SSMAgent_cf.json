@@ -81,11 +81,6 @@
             "Default": "25%",
             "AllowedPattern": "^([1-9][0-9]*|[1-9][0-9]%|[1-9]%|100%)$"
         },
-        "MaintenanceServiceRoleArn": {
-            "Description": "The ARN of the IAM service role to use to publish Amazon Simple Notification Service (Amazon SNS) notifications for maintenance window Run Command tasks.",
-            "Type": "String",
-            "Default": "arn:aws:iam::{AccountId}:role/aws-service-role/ssm.amazonaws.com/AWSServiceRoleForAmazonSSM"
-        },
         "MaintenanceTargetSNSARN": {
             "Description": "ARN of the SNS Topic to send notifications through",
             "Type": "String"
@@ -168,9 +163,6 @@
                     }
                 ],
                 "TaskArn": "AWS-UpdateSSMAgent",
-                "ServiceRoleArn": {
-                    "Ref": "MaintenanceServiceRoleArn"
-                },
                 "TaskType": "RUN_COMMAND",
                 "TaskInvocationParameters": {
                     "MaintenanceWindowRunCommandParameters": {
@@ -244,7 +236,6 @@
                         "MaintenanceWindowRunCommandTaskPriority",
                         "MaintenanceWindowRunCommandTaskMaxConcurrency",
                         "MaintenanceWindowRunCommandTaskMaxErrors",
-                        "MaintenanceServiceRoleArn",
                         "MaintenanceTargetSNSARN",
                         "MaintenanceRunCommandS3Bucket",
                         "MaintenanceRunCommandS3BucketPrefix"
@@ -293,9 +284,6 @@
                 },
                 "MaintenanceWindowRunCommandTaskMaxErrors": {
                     "default": "Run Command Max Error Rate"
-                },
-                "MaintenanceServiceRoleArn": {
-                    "default": "Run Command IAM Service Role ARN"
                 },
                 "MaintenanceTargetSNSARN": {
                     "default": "ARN of the SNS Topic to send notifications through"
