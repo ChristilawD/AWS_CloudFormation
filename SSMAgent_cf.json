@@ -159,9 +159,7 @@
                 },
                 "Targets": [
                     {
-                        "Key": {
-                            "Ref": "MaintenanceTargetTarget"
-                        },
+                        "Key": "WindowTargetIds",
                         "Values": [
                             {
                                 "Ref": "MaintenanceWindowTarget"

@@ -106,7 +106,7 @@ Resources:
     Properties:
       WindowId: !Ref MaintenanceWindow
       Targets:
-        - Key: !Ref MaintenanceTargetTarget
+        - Key: WindowTargetIds
           Values:
             - !Ref MaintenanceWindowTarget
       TaskArn: AWS-UpdateSSMAgent
