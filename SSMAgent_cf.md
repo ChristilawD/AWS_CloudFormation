@@ -17,7 +17,6 @@ Thew following work will need to be completed to be able to use this template:
 *           AllowedValues:
             - True
             - False
-* Run Command IAM Service Role ARN
 * Finding your account ID (Console)
 
 ![Console AccountId](/images/account-id-iam-console.png)
@@ -26,7 +25,7 @@ Thew following work will need to be completed to be able to use this template:
 *           aws sts get-caller-identity
 * ARN of the SNS Topic to send notifications through (Optional, can be removed if no notification is needed)
 *           In order to get notifications (email, sms or other), you will need to create/use a topic, obtain the ARN and enter it here
-* S3 Bucket Name to store logs / S3 Bucket prefix to assign logs for this job (Optional, can be removed if no notification is needed)
+* S3 Bucket Name to store logs / S3 Bucket prefix to assign logs for this job (Optional, can be removed if no log collection is needed)
 *           These need to already exist in order to be used
 
 # Template Parameters
