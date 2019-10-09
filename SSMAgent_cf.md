@@ -2,6 +2,8 @@
 
 This document will cover the creation of an SSM Agent Update Maintenance Windows, Task and Targets for the maintenance.
 
+*           Any items marked **(OPTIONAL)** can be removed if there is no need to specify this information
+
 # Prerequisites
 
 Thew following work will need to be completed to be able to use this template:
@@ -34,12 +36,12 @@ Thew following work will need to be completed to be able to use this template:
 ## Maintenance Window
 
 * Maintenance Window Name (lowecase, no spaces)
-* Maintenance Window Description (128 char max)
+* Maintenance Window Description (128 char max) **(OPTIONAL)**
 * Timezone format as found here: https://docs.aws.amazon.com/redshift/latest/dg/time-zone-names.html
 *           Use the labels on the linked page to ensure the job will run without issues in the timezone you select
             AWS will automatically convert this to UTC
 * Maintenance Window Duration (in hours)
-* Maintenance Window Cutoff (in hours before window closes) (Optional, can be removed)
+* Maintenance Window Cutoff (in hours before window closes) **(OPTIONAL)**
 *           New jobs will not be initiated on instances once this time is reached. Be sure to allow for enough time for the job to run on all instances!
 * Maintenance Window Schedule
 *           Cron/Rate expression for schedule - Sample - cron(0 0 23 ? * WED *)
@@ -49,7 +51,7 @@ Thew following work will need to be completed to be able to use this template:
 ## Maintenance Target Configuration
 
 * Maintenance Target Config Name (lowercase, no spaces)
-* Maintenance Target Config Description (128 char max)
+* Maintenance Target Config Description (128 char max) **(OPTIONAL)**
 * Maintenance Target Tag Key (format: tag:{keyName})
 *           Value should look like: tag:AgentUpdate
 * Maintenance Target Key Value
@@ -62,16 +64,16 @@ Thew following work will need to be completed to be able to use this template:
 * Run Command Task Priority
 *           Values 0 - 5
             Default set to 1 - This does not need to be changed
-* Run Command Max Concurrency (Optional, can be removed)
+* Run Command Max Concurrency **(OPTIONAL)**
 *           You can use an Integer or a Percent
-* Run Command Max Error Rate (Optional, can be removed)
+* Run Command Max Error Rate **(OPTIONAL)**
 *           You can use an Integer or a Percent
-* Run Command IAM Service Role ARN
+* Run Command IAM Service Role ARN **(OPTIONAL)**
 *           The default value is:
             arn:aws:iam::{AccountId}:role/aws-service-role/ssm.amazonaws.com/AWSServiceRoleForAmazonSSM
             Update the {AccountId} with your actual AWS Account ID (see above to obtain this information)
-* ARN of the SNS Topic to send notifications through (Optional, can be removed if no notification is needed)
+* ARN of the SNS Topic to send notifications through **(OPTIONAL)**
 *           Must be a VALID ARN
-* S3 Bucket Name to store logs (Optional, can be removed if no notification is needed)
+* S3 Bucket Name to store logs **(OPTIONAL)**
 *           Bucket Name, NOT ARN
-* S3 Bucket prefix to assign logs for this job (Optional, can be removed if no notification is needed)
+* S3 Bucket prefix to assign logs for this job **(OPTIONAL)**
