@@ -27,11 +27,13 @@ This template was built to help automate (to a degree) the creation of a Systems
 * ~~SSMAgentcf.yaml - Failing on run #1~~ **Resolved**
 * ~~Template error when using S3 Logging section #2~~ **Resolved**
 
-## WindowsServerPatching_cf.yaml
+## RunBaselineServerPatching_cf.yaml
 #### Validated and Tested
 #### MarkDown created and committed
 
-This is specific for Windows Server Patching as the Run Command that is invoked here is specific to Windows Patching. The Run Command Document used to build this schedule is an AWS Supplied Document that works with the Windows platform.
+This document will cover the creation of a Windows/Linux Server Patching Maintenance Windows, Task and Targets for the maintenance.
+
+This Maintnance Window runs the following Document: AWS-RunPatchBaseline
 
 ### Current Issues
 
