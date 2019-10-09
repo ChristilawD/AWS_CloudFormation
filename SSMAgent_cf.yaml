@@ -124,6 +124,7 @@ Resources:
       Name: !Ref MaintenanceWindowRunCommandTaskName
 
 Metadata:
+  License: Apache-2.0
   AWS::CloudFormation::Interface:
     ParameterGroups:
       -
@@ -175,7 +176,7 @@ Metadata:
       MaintenanceTargetTarget:
         default: "Maintenance Target Tag Key (format: tag:{keyName})"
       MaintenaneTargetKeyValue:
-        default: "Maintenance Tarket Key Value"
+        default: "Maintenance Target Key Value"
       MaintenanceWindowRunCommandTaskName:
         default: "Run Command Name (lowercase, no spaces)"
       MaintenanceWindowRunCommandTaskPriority:

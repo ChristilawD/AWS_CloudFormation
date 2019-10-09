@@ -121,6 +121,7 @@ Resources:
       Name: !Ref MaintenanceWindowRunCommandTaskName
 
 Metadata:
+  License: Apache-2.0
   AWS::CloudFormation::Interface:
     ParameterGroups:
       -
