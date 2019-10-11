@@ -18,7 +18,7 @@ If you are going to remove Optional items from the template, be sure you remove 
 
 ## SSMAgent_cf.yaml
 #### Validated and Tested
-#### MarkDown created and committed
+#### Wiki page created
 
 This template was built to help automate (to a degree) the creation of a Systems Manager Maintenace Window and jobs to update the SSM Agents installed on variuos machines. This template should work in Windows and Linux distro's, but only tested on Windows. The Run Command Document used to build this schedule is an AWS Supplied Document that works with both platforms.
 
@@ -29,7 +29,7 @@ This template was built to help automate (to a degree) the creation of a Systems
 
 ## RunBaselineServerPatching_cf.yaml
 #### Validated and Tested
-#### MarkDown created and committed
+#### Wiki page created
 
 This document will cover the creation of a Windows/Linux Server Patching Maintenance Windows, Task and Targets for the maintenance.
 
