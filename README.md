@@ -8,7 +8,7 @@ All of these templates will come in YAML and JSON format, feel free to use eithe
 Please feel free to open issues for questions or issues that come up using these. I will work to fix them as time allows.
 
 ## Documentation
-I will work to document these as well as I can, but please feel free to use these as needed. I will work to include a MarkDown file for each template that expands on some information needed to successfully use them.
+I will work to document these as well as I can, but please feel free to use these as needed. I will work to include a Wiki Page for each template that expands on some information needed to successfully use them.
 
 # Note on Optional Items
 
