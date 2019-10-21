@@ -1,0 +1,188 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: Elasticsearch Domain resource
+
+Metadata:
+  AWS::CloudFormation::Interface:
+    ParameterGroups:
+      -
+        Label:
+          default: "Configure Cluster"
+        Parameters:
+          - DomainName
+          - ElasticsearchVersion
+      -
+        Label:
+          default: "Data Instances"
+        Parameters:
+          - InstanceType
+          - DataInstanceCount
+      -
+        Label:
+          default: "Dedicated Mastger Instances"
+        Parameters:
+          - DedicatedMaster
+          - MasterInstanceType
+          - MasterInstanceCount
+      -
+        Label:
+          default: "Storage Config"
+        Parameters:
+          - StorageSize
+      -
+        Label:
+          default: "Network Config"
+        Parameters:
+          - AvailabilityZone
+          - SecurityGroup
+    ParameterLabels:
+      DomainName:
+        default: "Name of the ElasticSearch Domain (lowecase, no spaces)"
+      ElasticsearchVersion:
+        default: "Select the ElasticSearch version desired"
+      InstanceType:
+        default: "Instance Type of Data Instances"
+      DedicatedMaster:
+        default: "Select if a Dedicated Master Instance is required"
+      MasterInstanceType:
+        default: "Instance Type of Master Instances"
+      StorageSize:
+        default: "Storage Size in GB"
+      AvailabilityZone:
+        default: "Select ehe availability zone for this deployment"
+
+Parameters:
+  DomainName:
+    Type: String
+    MaxLength: '128'  
+  ElasticsearchVersion:
+    Type: String
+    Default: 7.1
+    AllowedValues: [7.1, 6.8, 6.7, 6.6, 6.5]
+  InstanceType:
+    Type: String
+    Default: t2.medium.elasticsearch
+    AllowedValues: [t2.small.elasticsearch, t2.medium.elasticsearch,
+      c4.large.elasticsearch, c4.xlarge.elasticsearch, c4.2xlarge.elasticsearch, c4.4xlarge.elasticsearch, c4.8xlarge.elasticsearch,
+      c5.large.elasticsearch, c5.xlarge.elasticsearch, c5.2xlarge.elasticsearch, c5.4xlarge.elasticsearch, c5.9xlarge.elasticsearch, c5.18xlarge.elasticsearch,
+      m3.medium.elasticsearch, m3.large.elasticsearch, m3.xlarge.elasticsearch, m3.2xlarge.elasticsearch,
+      m4.large.elasticsearch, m4.xlarge.elasticsearch, m4.2xlarge.elasticsearch, m4.4xlarge.elasticsearch, m4.10xlarge.elasticsearch,
+      m5.large.elasticsearch, m5.xlarge.elasticsearch, m5.2xlarge.elasticsearch, m5.4xlarge.elasticsearch, m5.12xlarge.elasticsearch,
+      r3.large.elasticsearch, r3.xlarge.elasticsearch, r3.2xlarge.elasticsearch, r3.4xlarge.elasticsearch, r3.8xlarge.elasticsearch,
+      r4.large.elasticsearch, r4.xlarge.elasticsearch, r4.2xlarge.elasticsearch, r4.4xlarge.elasticsearch, r4.16xlarge.elasticsearch,
+      r5.large.elasticsearch, r5.xlarge.elasticsearch, r5.2xlarge.elasticsearch, r5.4xlarge.elasticsearch, r5.12xlarge.elasticsearch,
+      i2.xlarge.elasticsearch, i2.2xlarge.elasticsearch,
+      i3.large.elasticsearch, i3.xlarge.elasticsearch, i3.2xlarge.elasticsearch, i3.4xlarge.elasticsearch, i3.8xlarge.elasticsearch, i3.16xlarge.elasticsearch]
+    ConstraintDescription: must be a valid EC2 instance type.
+  DataInstanceCount:
+    Type: Number
+    Default: 1
+    AllowedValues: [1, 2, 3, 4, 5, 6]    
+  MasterInstanceType:
+    Type: String
+    Default: t2.medium.elasticsearch
+    AllowedValues: [t2.small.elasticsearch, t2.medium.elasticsearch,
+      c4.large.elasticsearch, c4.xlarge.elasticsearch, c4.2xlarge.elasticsearch, c4.4xlarge.elasticsearch, c4.8xlarge.elasticsearch,
+      c5.large.elasticsearch, c5.xlarge.elasticsearch, c5.2xlarge.elasticsearch, c5.4xlarge.elasticsearch, c5.9xlarge.elasticsearch, c5.18xlarge.elasticsearch,
+      m3.medium.elasticsearch, m3.large.elasticsearch, m3.xlarge.elasticsearch, m3.2xlarge.elasticsearch,
+      m4.large.elasticsearch, m4.xlarge.elasticsearch, m4.2xlarge.elasticsearch, m4.4xlarge.elasticsearch, m4.10xlarge.elasticsearch,
+      m5.large.elasticsearch, m5.xlarge.elasticsearch, m5.2xlarge.elasticsearch, m5.4xlarge.elasticsearch, m5.12xlarge.elasticsearch,
+      r3.large.elasticsearch, r3.xlarge.elasticsearch, r3.2xlarge.elasticsearch, r3.4xlarge.elasticsearch, r3.8xlarge.elasticsearch,
+      r4.large.elasticsearch, r4.xlarge.elasticsearch, r4.2xlarge.elasticsearch, r4.4xlarge.elasticsearch, r4.16xlarge.elasticsearch,
+      r5.large.elasticsearch, r5.xlarge.elasticsearch, r5.2xlarge.elasticsearch, r5.4xlarge.elasticsearch, r5.12xlarge.elasticsearch,
+      i2.xlarge.elasticsearch, i2.2xlarge.elasticsearch,
+      i3.large.elasticsearch, i3.xlarge.elasticsearch, i3.2xlarge.elasticsearch, i3.4xlarge.elasticsearch, i3.8xlarge.elasticsearch, i3.16xlarge.elasticsearch]
+    ConstraintDescription: must be a valid EC2 instance type.
+  MasterInstanceCount:
+    Type: Number
+    Default: 1
+    AllowedValues: [1, 2, 3, 4, 5, 6]
+  AvailabilityZone:
+    Type: AWS::EC2::AvailabilityZone::Name
+  CidrBlock:
+    Type: String
+    MinLength: 9
+    MaxLength: 18    
+    Default: 0.0.0.0/0
+    AllowedPattern: (\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})/(\d{1,2})
+    ConstraintDescription: Must be a valid IP CIDR range of the form x.x.x.x/x.
+  SecurityGroup:
+    Type: AWS::EC2::SecurityGroup::GroupName
+  DedicatedMaster:
+    Description: True or False
+    Type: String
+    Default: True
+    AllowedValues:
+      - True
+      - False
+  StorageSize:
+    Type: Number
+    Default: 20
+
+Resources:
+  ElasticsearchDomain:
+    Type: AWS::Elasticsearch::Domain
+    Properties:
+      DomainName: !Ref DomainName
+      ElasticsearchVersion: !Ref ElasticsearchVersion
+      ElasticsearchClusterConfig: 
+        DedicatedMasterEnabled: !Ref DedicatedMaster
+        InstanceCount: !Ref DataInstanceCount
+        ZoneAwarenessEnabled: "true"
+        InstanceType: !Ref InstanceType
+        DedicatedMasterType: !Ref MasterInstanceType
+        DedicatedMasterCount: !Ref MasterInstanceCount
+      EBSOptions:
+        EBSEnabled: true
+        Iops: 0
+        VolumeSize: !Ref StorageSize
+        VolumeType: "gp2"
+      SnapshotOptions:
+        AutomatedSnapshotStartHour: "0"      
+        AccessPolicies:
+          Version: 2012-10-17
+          Statement:
+            - Effect: Deny
+              Principal:
+                AWS: '*'
+              Action: 'es:*'
+              Resource: '*'
+        AdvancedOptions:
+          rest.action.multi.allow_explicit_index: 'true'
+      Tags:
+        - Key: foo
+          Value: bar
+      VPCOptions:
+        SubnetIds:
+          - !Ref subnet
+        SecurityGroupIds:
+          - !Ref mySecurityGroup
+  vpc:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: !Ref CidrBlock
+  subnet:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref vpc
+      CidrBlock: !Ref CidrBlock
+      AvailabilityZone: !Ref AvailabilityZone
+  mySecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      VpcId: !Ref vpc
+      GroupName: !Ref SecurityGroup
+      SecurityGroupIngress:
+        - FromPort: '443'
+          IpProtocol: tcp
+          ToPort: '443'
+          CidrIp: 0.0.0.0/0
+
+Outputs:
+  DomainArn:
+    Value: !GetAtt ElasticsearchDomain.DomainArn
+  DomainEndpoint:
+    Value: !GetAtt ElasticsearchDomain.DomainEndpoint
+  SecurityGroupId:
+    Value: !Ref mySecurityGroup
+  SubnetId:
+    Value: !Ref subnet
