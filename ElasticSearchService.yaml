@@ -136,7 +136,7 @@ Parameters:
   CidrBlock:
     Type: String
     MinLength: 9
-    MaxLength: 18    
+    MaxLength: 18
     Default: 0.0.0.0/0
     AllowedPattern: (\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})/(\d{1,2})
     ConstraintDescription: Must be a valid IP CIDR range of the form x.x.x.x/x.
@@ -201,8 +201,7 @@ Resources:
         VolumeSize: !Ref StorageSize
         VolumeType: "gp2"
       SnapshotOptions:
-        AutomatedSnapshotStartHour: "0"      
-      AccessPolicies:
+        AutomatedSnapshotStartHour: "0"
         Version: 2012-10-17
         Statement:
           - Effect: Deny
@@ -212,6 +211,7 @@ Resources:
             Resource: "*"
       AdvancedOptions:
         rest.action.multi.allow_explicit_index: 'true'
+        indices.fielddata.cache.size: !Ref "AWS::NoValue"
       VPCOptions:
         SubnetIds:
           - !Ref subnet1
