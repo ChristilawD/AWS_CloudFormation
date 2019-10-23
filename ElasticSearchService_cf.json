@@ -72,7 +72,7 @@
                     "default": "Select the ElasticSearch version desired"
                 },
                 "InstanceType": {
-                    "default": "Instance Type of Data Instances"
+                    "default": "Instance Size of Data Instances"
                 },
                 "DataInstanceCount": {
                     "default": "Number of Data Instances Required"
@@ -81,7 +81,7 @@
                     "default": "Select if a Dedicated Master Instance is required"
                 },
                 "MasterInstanceType": {
-                    "default": "Instance Type of Master Instances"
+                    "default": "Instance Size of Master Instances"
                 },
                 "MasterInstanceCount": {
                     "default": "How many Dedicated Master Instances are needed? (0, 3 or 5)"
@@ -108,13 +108,13 @@
                     "default": "New Security Group Description"
                 },
                 "SecurityGroup": {
-                    "default": "Name of the New Security Group to create"
+                    "default": "Name of the New Security Group"
                 },
                 "IamUserArn": {
                     "default": "Enter the ARN for the IAM User to give initial access to the stack"
                 },
                 "ZoneAwareness": {
-                    "default": "Enable Zone Awareness (Availability Zone Replication)"
+                    "default": "Enable Zone Awareness (Availability Zone Replication) (recommended)"
                 }
             }
         }
@@ -123,7 +123,8 @@
         "DomainName": {
             "Type": "String",
             "Default": "elasticsearchstack-cf",
-            "MaxLength": "128"
+            "MaxLength": "128",
+            "ConstraintDescription": "Must be lowercase, numbers/letters and/or a dash"
         },
         "ElasticsearchVersion": {
             "Type": "String",
@@ -191,7 +192,7 @@
                 "i3.8xlarge.elasticsearch",
                 "i3.16xlarge.elasticsearch"
             ],
-            "ConstraintDescription": "must be a valid EC2 instance type."
+            "ConstraintDescription": "Must be a valid EC2 Elasticsearch instance type."
         },
         "DataInstanceCount": {
             "Type": "Number",
@@ -272,7 +273,7 @@
         },
         "VpcId": {
             "Type": "AWS::EC2::VPC::Id",
-            "ConstraintDescription": "Must be the VPC Id of an existing Virtual Private Cloud."
+            "ConstraintDescription": "Must be the VPC ID of an existing Virtual Private Cloud."
         },
         "CidrBlock": {
             "Type": "String",
@@ -298,7 +299,8 @@
         },
         "SecurityGroup": {
             "Type": "String",
-            "Default": "elasticsearchstack-nsg"
+            "Default": "elasticsearchstack-nsg",
+            "ConstraintDescription": "Must be lowercase, numbers/letters and/or a dash"
         },
         "DedicatedMaster": {
             "Description": "True or False",
@@ -318,7 +320,8 @@
         "GroupDescription": {
             "Type": "String",
             "Default": "ElasticSearch Stack from CloudFormation",
-            "MaxLength": "128"
+            "MaxLength": "128",
+            "ConstraintDescription": "Upper/Lowercase, numbers/letters and/or a dash"
         },
         "IamUserArn": {
             "Type": "String",
