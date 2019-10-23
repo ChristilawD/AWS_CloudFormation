@@ -1,0 +1,263 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: >-
+  **NOTE** In order to create Elastisearch Domain in AWS using CloudFormation
+  verify you have the following Service Role created in IAM!!
+  -- AWSServiceRoleForAmazonElasticsearchService --
+  If you do not have this Role, create it using the following CLi Command -- 
+  aws iam create-service-linked-role --aws-service-name es.amazonaws.com
+
+Metadata:
+  AWS::CloudFormation::Interface:
+    ParameterGroups:
+      -
+        Label:
+          default: "Configure Cluster"
+        Parameters:
+          - DomainName
+          - ElasticsearchVersion
+          - ZoneAwareness
+      -
+        Label:
+          default: "Data Instances"
+        Parameters:
+          - InstanceType
+          - DataInstanceCount
+      -
+        Label:
+          default: "Dedicated Mastger Instances"
+        Parameters:
+          - DedicatedMaster
+          - MasterInstanceType
+          - MasterInstanceCount
+      -
+        Label:
+          default: "Storage Config"
+        Parameters:
+          - StorageSize
+      -
+        Label:
+          default: "Network Config"
+        Parameters:
+          - VpcId
+          - CidrBlock
+          - CidrBlock2
+          - AvailabilityZone
+          - AvailabilityZone2
+          - SecurityGroup
+          - GroupDescription
+      -
+        Label:
+          default: "IAM User Restriction Policy"
+        Parameters:
+          - IamUserArn
+    ParameterLabels:
+      DomainName:
+        default: "Name of the ElasticSearch Domain (lowecase, no spaces) - If you don't specify a name, AWS CloudFormation generates a unique physical ID and uses that ID for the domain name"
+      ElasticsearchVersion:
+        default: "Select the ElasticSearch version desired"
+      InstanceType:
+        default: "Instance Type of Data Instances"
+      DataInstanceCount:
+        default: "Number of Data Instances Required"
+      DedicatedMaster:
+        default: "Select if a Dedicated Master Instance is required"
+      MasterInstanceType:
+        default: "Instance Type of Master Instances"
+      MasterInstanceCount:
+        default: "How many Dedicated Master Instances are needed? (0, 3 or 5)"
+      StorageSize:
+        default: "Storage Size in GB"
+      AvailabilityZone:
+        default: "Select the first availability zone for this deployment"
+      AvailabilityZone2:
+        default: "Select the second availability zone for this deployment"
+      VpcId:
+        default: "Select the VPC to deploy into (must already exist)"
+      CidrBlock:
+        default: "CIDR Block of the first New Subnet to be created"
+      CidrBlock2:
+        default: "CIDR Block of the second New Subnet to be created"
+      GroupDescription:
+        default: "New Security Group Description"
+      SecurityGroup:
+        default: "Name of the New Security Group to create"
+      IamUserArn:
+        default: "Enter the ARN for the IAM User to give initial access to the stack"
+      ZoneAwareness:
+        default: "Enable Zone Awareness (Availability Zone Replication)"
+
+Parameters:
+  DomainName:
+    Type: String
+    Default: "elasticsearchstack-cf"
+    MaxLength: '128'  
+  ElasticsearchVersion:
+    Type: String
+    Default: 7.1
+    AllowedValues: [7.1, 6.8, 6.7, 6.6, 6.5] # Remove this line for free-form number entry
+  InstanceType:
+    Type: String
+    Default: t2.medium.elasticsearch
+    AllowedValues: [t2.small.elasticsearch, t2.medium.elasticsearch,
+      c4.large.elasticsearch, c4.xlarge.elasticsearch, c4.2xlarge.elasticsearch, c4.4xlarge.elasticsearch, c4.8xlarge.elasticsearch,
+      c5.large.elasticsearch, c5.xlarge.elasticsearch, c5.2xlarge.elasticsearch, c5.4xlarge.elasticsearch, c5.9xlarge.elasticsearch, c5.18xlarge.elasticsearch,
+      m3.medium.elasticsearch, m3.large.elasticsearch, m3.xlarge.elasticsearch, m3.2xlarge.elasticsearch,
+      m4.large.elasticsearch, m4.xlarge.elasticsearch, m4.2xlarge.elasticsearch, m4.4xlarge.elasticsearch, m4.10xlarge.elasticsearch,
+      m5.large.elasticsearch, m5.xlarge.elasticsearch, m5.2xlarge.elasticsearch, m5.4xlarge.elasticsearch, m5.12xlarge.elasticsearch,
+      r3.large.elasticsearch, r3.xlarge.elasticsearch, r3.2xlarge.elasticsearch, r3.4xlarge.elasticsearch, r3.8xlarge.elasticsearch,
+      r4.large.elasticsearch, r4.xlarge.elasticsearch, r4.2xlarge.elasticsearch, r4.4xlarge.elasticsearch, r4.16xlarge.elasticsearch,
+      r5.large.elasticsearch, r5.xlarge.elasticsearch, r5.2xlarge.elasticsearch, r5.4xlarge.elasticsearch, r5.12xlarge.elasticsearch,
+      i2.xlarge.elasticsearch, i2.2xlarge.elasticsearch,
+      i3.large.elasticsearch, i3.xlarge.elasticsearch, i3.2xlarge.elasticsearch, i3.4xlarge.elasticsearch, i3.8xlarge.elasticsearch, i3.16xlarge.elasticsearch]
+    ConstraintDescription: must be a valid EC2 instance type.
+  DataInstanceCount:
+    Type: Number
+    Default: 2
+    AllowedValues: [2, 4, 6, 8, 10] # Remove this line for free-form number entry
+  MasterInstanceType:
+    Type: String
+    Default: t2.medium.elasticsearch
+    AllowedValues: [t2.small.elasticsearch, t2.medium.elasticsearch,
+      c4.large.elasticsearch, c4.xlarge.elasticsearch, c4.2xlarge.elasticsearch, c4.4xlarge.elasticsearch, c4.8xlarge.elasticsearch,
+      c5.large.elasticsearch, c5.xlarge.elasticsearch, c5.2xlarge.elasticsearch, c5.4xlarge.elasticsearch, c5.9xlarge.elasticsearch, c5.18xlarge.elasticsearch,
+      m3.medium.elasticsearch, m3.large.elasticsearch, m3.xlarge.elasticsearch, m3.2xlarge.elasticsearch,
+      m4.large.elasticsearch, m4.xlarge.elasticsearch, m4.2xlarge.elasticsearch, m4.4xlarge.elasticsearch, m4.10xlarge.elasticsearch,
+      m5.large.elasticsearch, m5.xlarge.elasticsearch, m5.2xlarge.elasticsearch, m5.4xlarge.elasticsearch, m5.12xlarge.elasticsearch,
+      r3.large.elasticsearch, r3.xlarge.elasticsearch, r3.2xlarge.elasticsearch, r3.4xlarge.elasticsearch, r3.8xlarge.elasticsearch,
+      r4.large.elasticsearch, r4.xlarge.elasticsearch, r4.2xlarge.elasticsearch, r4.4xlarge.elasticsearch, r4.16xlarge.elasticsearch,
+      r5.large.elasticsearch, r5.xlarge.elasticsearch, r5.2xlarge.elasticsearch, r5.4xlarge.elasticsearch, r5.12xlarge.elasticsearch,
+      i2.xlarge.elasticsearch, i2.2xlarge.elasticsearch,
+      i3.large.elasticsearch, i3.xlarge.elasticsearch, i3.2xlarge.elasticsearch, i3.4xlarge.elasticsearch, i3.8xlarge.elasticsearch, i3.16xlarge.elasticsearch]
+    ConstraintDescription: Must be a valid EC2 Elasticsearch instance type.
+  MasterInstanceCount:
+    Type: Number
+    Default: 0
+    AllowedValues: [0, 3, 5] # Remove this line for free-form number entry
+  VpcId:
+    Type: AWS::EC2::VPC::Id
+    ConstraintDescription: "Must be the VPC Id of an existing Virtual Private Cloud."
+  CidrBlock:
+    Type: String
+    MinLength: 9
+    MaxLength: 18
+    Default: 172.31.100.0/20
+    AllowedPattern: (\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})/(\d{1,2})
+    ConstraintDescription: Must be a valid IP CIDR range of the form x.x.x.x/x.
+  CidrBlock2:
+    Type: String
+    MinLength: 9
+    MaxLength: 18    
+    Default: 172.31.150.0/20
+    AllowedPattern: (\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})/(\d{1,2})
+    ConstraintDescription: Must be a valid IP CIDR range of the form x.x.x.x/x.
+  AvailabilityZone:
+    Type: AWS::EC2::AvailabilityZone::Name
+  AvailabilityZone2:
+    Type: AWS::EC2::AvailabilityZone::Name
+  SecurityGroup:
+    Type: String
+    Default: "elasticsearchstack-nsg"
+
+  DedicatedMaster:
+    Description: True or False
+    Type: String
+    Default: False
+    AllowedValues:
+      - True
+      - False
+  StorageSize:
+    Type: Number
+    Default: 20
+    MinValue: 10 # Remove this line for free-form number entry
+    MaxValue: 1000 # Remove this line for free-form number entry
+  GroupDescription:
+    Type: String
+    Default: "ElasticSearch Stack from CloudFormation"
+    MaxLength: '128'
+  IamUserArn:
+    Type: String
+    Default: "arn:aws:iam::<AccountNumber>:user/<username>"
+  ZoneAwareness:
+    Description: True or False
+    Type: String
+    Default: True
+    AllowedValues:
+      - True
+      - False
+Conditions: # Checks to see if Dedicated Master is True
+  DedicatedMasterYes: !Equals [ !Ref DedicatedMaster, True]
+
+Resources:
+  ElasticsearchDomain:
+    Type: AWS::Elasticsearch::Domain
+    Properties:
+      DomainName: !Ref DomainName
+      ElasticsearchVersion: !Ref ElasticsearchVersion
+      ElasticsearchClusterConfig: 
+        DedicatedMasterEnabled: !Ref DedicatedMaster
+        InstanceCount: !Ref DataInstanceCount
+        ZoneAwarenessEnabled: !Ref ZoneAwareness
+        InstanceType: !Ref InstanceType
+        DedicatedMasterType: # If Dedicated Master is True, then use !Ref, if not, use NoValue (NULL)
+          !If [DedicatedMasterYes, !Ref MasterInstanceType, !Ref "AWS::NoValue"]
+        DedicatedMasterCount: 
+          !If [DedicatedMasterYes, !Ref MasterInstanceCount, !Ref "AWS::NoValue"]
+      EBSOptions:
+        EBSEnabled: True
+        Iops: 0
+        VolumeSize: !Ref StorageSize
+        VolumeType: "gp2"
+      SnapshotOptions:
+        AutomatedSnapshotStartHour: "0"
+      AccessPolicies:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Deny
+            Principal:
+              AWS: !Ref IamUserArn
+            Action: 'es:*'
+            Resource: "*"
+      AdvancedOptions: # These 2 settingsd are REQUIRED (regardless of what the documentation states) - Bug filed: https://forums.aws.amazon.com/thread.jspa?messageID=768527
+        rest.action.multi.allow_explicit_index: 'true'
+        indices.fielddata.cache.size: !Ref "AWS::NoValue"
+      VPCOptions:
+        SubnetIds:
+          - !Ref subnet1
+          - !Ref subnet2
+        SecurityGroupIds:
+          - !Ref mySecurityGroup
+  subnet1:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref VpcId
+      CidrBlock: !Ref CidrBlock
+      AvailabilityZone: !Ref AvailabilityZone
+  subnet2:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref VpcId
+      CidrBlock: !Ref CidrBlock2
+      AvailabilityZone: !Ref AvailabilityZone2
+  mySecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      VpcId: !Ref VpcId
+      GroupName: !Ref SecurityGroup
+      GroupDescription: !Ref GroupDescription
+      SecurityGroupIngress:
+        - FromPort: '443'
+          IpProtocol: tcp
+          ToPort: '443'
+          CidrIp: 0.0.0.0/0
+
+Outputs:
+  DomainArn:
+    Value: !GetAtt ElasticsearchDomain.DomainArn
+  DomainEndpoint:
+    Value: !GetAtt ElasticsearchDomain.DomainEndpoint
+  SecurityGroupId:
+    Value: !Ref mySecurityGroup
+  SubnetId:
+    Value: !Ref subnet1
+  SubnetId2:
+    Value: !Ref subnet2
