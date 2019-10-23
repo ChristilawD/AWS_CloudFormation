@@ -40,5 +40,5 @@ This Maintnance Window runs the following Document: AWS-RunPatchBaseline
 * ~~Template error when using S3 Logging section #2~~ **Resolved**
 
 ## ElasticSearchService.yaml
-#### Un-Validated and Un-Tested
+#### Validated and Tested
 #### Wiki page TBD
