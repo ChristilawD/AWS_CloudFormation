@@ -39,7 +39,7 @@ This Maintnance Window runs the following Document: AWS-RunPatchBaseline
 
 * ~~Template error when using S3 Logging section #2~~ **Resolved**
 
-## ElasticSearchService.yaml
+## ElasticSearchService_*_cf.yaml
 #### Validated and Tested
 #### Wiki page TBD
 
@@ -50,3 +50,13 @@ AWSServiceRoleForAmazonElasticsearchService
 If you do not have this Role, create it using the following CLi Command:
 
 aws iam create-service-linked-role --aws-service-name es.amazonaws.com
+
+Multiple TEmplates here:
+
+### ElasticSearchService_cf.yaml/json
+
+These tempaltes will use existing VPC's and Subnets.
+
+### ElasticSearchService_CreateSubNets_cf.yaml
+
+These tempaltes will Create SubNets in an existing VPC.
