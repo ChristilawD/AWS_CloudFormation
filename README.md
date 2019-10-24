@@ -57,6 +57,6 @@ Multiple TEmplates here:
 
 These tempaltes will use existing VPC's and Subnets.
 
-### ElasticSearchService_CreateSubNets_cf.yaml
+### ElasticSearchService_CreateSubNets_cf.yaml/json
 
 These tempaltes will Create SubNets in an existing VPC.
