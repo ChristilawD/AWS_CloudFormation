@@ -49,9 +49,9 @@ AWSServiceRoleForAmazonElasticsearchService
 
 If you do not have this Role, create it using the following CLi Command:
 
-aws iam create-service-linked-role --aws-service-name es.amazonaws.com
+`aws iam create-service-linked-role --aws-service-name es.amazonaws.com`
 
-Multiple TEmplates here:
+Multiple Templates here:
 
 ### ElasticSearchService_cf.yaml/json
 
