@@ -237,3 +237,7 @@ Outputs:
     Value: !GetAtt ElasticsearchDomain.DomainEndpoint
   SecurityGroupId:
     Value: !Ref mySecurityGroup
+  SubnetId1:
+    Value: !Ref SubNet1
+  SubnetId2:
+    Value: !Ref SubNet2
