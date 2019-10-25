@@ -63,4 +63,4 @@ This tempaltes will use an existing VPC and Subnets, but will create new Securit
 
 ### ElasticSearchService_ExistingInfra_cf.yaml/json
 
-This template will use existing VPC, SubNets and SecuroityGroup. No New Infra is built outside the Search Domain infra.
+This template will use existing VPC, SubNets and SecurityGroup. No New Infra is built outside the Search Domain infra.
