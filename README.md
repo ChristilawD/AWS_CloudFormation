@@ -55,8 +55,12 @@ Multiple Templates here:
 
 ### ElasticSearchService_cf.yaml/json
 
-These tempaltes will use existing VPC's and Subnets.
+This tempaltes will use existing VPC's and Subnets.
 
 ### ElasticSearchService_CreateSubNets_cf.yaml/json
 
-These tempaltes will Create SubNets in an existing VPC.
+This tempaltes will Create SubNets in an existing VPC.
+
+### ElasticSearchService_ExistingInfra_cf.yaml/json
+
+This template will use existing VPC, SubNets and SecuroityGroup. No New Infra is built outside the Search Domain infra.
