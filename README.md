@@ -41,7 +41,7 @@ This Maintnance Window runs the following Document: AWS-RunPatchBaseline
 
 ## ElasticSearchService_*_cf.yaml
 #### Validated and Tested
-#### Wiki page TBD
+#### Wiki page DRAFT
 
 **NOTE** In order to create Elastisearch Domain in AWS using CloudFormation verify you have the following Service Role created in IAM!!
 
