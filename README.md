@@ -20,7 +20,7 @@ If you are going to remove Optional items from the template, be sure you remove 
 
 # Validation Hints
 
-For tempalte validation, I use cfn-lint (https://pypi.org/project/cfn-lint/) as well as CloudFormations Template Validator (using Design View). Also, **ALL** of these templates have been validated/tested and known to be wqorking in my environment. If you have issues, please open an issue and provide as much details as possible for me to help troubleshoot.
+For tempalte validation, I use cfn-lint (https://pypi.org/project/cfn-lint/) as well as CloudFormations Template Validator (using Design View). Also, **ALL** of these templates have been validated/tested and known to be working in my environment. If you have issues, please open an issue and provide as much details as possible for me to help troubleshoot.
 
 # Templates
 
