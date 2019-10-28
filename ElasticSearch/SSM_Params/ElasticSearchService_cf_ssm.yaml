@@ -40,14 +40,6 @@ Metadata:
           - StorageSize
       -
         Label:
-          default: "Network Config"
-        Parameters:
-          - VpcId
-          - SubNet1
-          - SubNet2
-          - SecurityGroup
-      -
-        Label:
           default: "Encryption Settings"
         Parameters:
           - EncryptionAtRest
@@ -75,8 +67,6 @@ Metadata:
         default: "How many Dedicated Master Instances are needed? (0, 3 or 5)"
       StorageSize:
         default: "Storage Size in GB"
-      SecurityGroup:
-        default: "Select the Security Group"
       IamUserArn:
         default: "Enter the ARN for the IAM User to give initial access to the stack"
       ZoneAwareness:
@@ -143,9 +133,6 @@ Parameters:
     Type: Number
     Default: 0
     AllowedValues: [0, 3, 5] # Remove this line for free-form number entry
-  SecurityGroup:
-    Type: AWS::EC2::SecurityGroup::Id
-    ConstraintDescription: "Must be and existing Security Group."    
   DedicatedMaster:
     Description: True or False
     Type: String
@@ -223,13 +210,14 @@ Resources:
         indices.fielddata.cache.size: !Ref "AWS::NoValue" # You can change this value: Specifies the percentage of Java heap space that is allocated to field data. By default, this setting is unbounded
       VPCOptions:
         SubnetIds:
-          - SubnetId1: '{{resolve:ssm:sharedsubnet1:1}}'
-          - SubnetId2: '{{resolve:ssm:sharedsubnet2:1}}'
+          - '{{resolve:ssm:sharedsubnet1:1}}'
+          - '{{resolve:ssm:sharedsubnet2:1}}'
         SecurityGroupIds:
-          - !Ref SecurityGroup
+          - '{{resolve:ssm:ddwa-https-access:1}}'
       EncryptionAtRestOptions: # If Encryption At Rest is True, then use !Ref, if not, use NoValue (NULL) for both settings (EncryptionAtRestOptions and KmsKeyId) - Suggest enabled for additional security
+        Enabled:
           !If [EncryptionAtRestYes, !Ref EncryptionAtRest, !Ref "AWS::NoValue"]
-      KmsKeyId:
+        KmsKeyId:
           !If [EncryptionAtRestYes, !Ref KmsKey, !Ref "AWS::NoValue"]
       NodeToNodeEncryptionOptions: # Defaults to True
         Enabled: !Ref NodetoNode
@@ -239,5 +227,3 @@ Outputs:
     Value: !GetAtt ElasticsearchDomain.DomainArn
   DomainEndpoint:
     Value: !GetAtt ElasticsearchDomain.DomainEndpoint
-  SecurityGroupId:
-    Value: !Ref SecurityGroup

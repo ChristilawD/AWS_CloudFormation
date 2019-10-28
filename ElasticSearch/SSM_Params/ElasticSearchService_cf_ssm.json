@@ -47,17 +47,6 @@
                 },
                 {
                     "Label": {
-                        "default": "Network Config"
-                    },
-                    "Parameters": [
-                        "VpcId",
-                        "SubNet1",
-                        "SubNet2",
-                        "SecurityGroup"
-                    ]
-                },
-                {
-                    "Label": {
                         "default": "Encryption Settings"
                     },
                     "Parameters": [
@@ -99,9 +88,6 @@
                 },
                 "StorageSize": {
                     "default": "Storage Size in GB"
-                },
-                "SecurityGroup": {
-                    "default": "Select the Security Group"
                 },
                 "IamUserArn": {
                     "default": "Enter the ARN for the IAM User to give initial access to the stack"
@@ -282,10 +268,6 @@
                 5
             ]
         },
-        "SecurityGroup": {
-            "Type": "AWS::EC2::SecurityGroup::Id",
-            "ConstraintDescription": "Must be and existing Security Group."
-        },
         "DedicatedMaster": {
             "Description": "True or False",
             "Type": "String",
@@ -436,40 +418,36 @@
                 },
                 "VPCOptions": {
                     "SubnetIds": [
-                        {
-                            "SubnetId1": "{{resolve:ssm:sharedsubnet1:1}}"
-                        },
-                        {
-                            "SubnetId2": "{{resolve:ssm:sharedsubnet2:1}}"
-                        }
+                        "{{resolve:ssm:sharedsubnet1:1}}",
+                        "{{resolve:ssm:sharedsubnet2:1}}"
                     ],
                     "SecurityGroupIds": [
-                        {
-                            "Ref": "SecurityGroup"
-                        }
+                        "{{resolve:ssm:ddwa-https-access:1}}"
                     ]
                 },
                 "EncryptionAtRestOptions": {
-                    "Fn::If": [
-                        "EncryptionAtRestYes",
-                        {
-                            "Ref": "EncryptionAtRest"
-                        },
-                        {
-                            "Ref": "AWS::NoValue"
-                        }
-                    ]
-                },
-                "KmsKeyId": {
-                    "Fn::If": [
-                        "EncryptionAtRestYes",
-                        {
-                            "Ref": "KmsKey"
-                        },
-                        {
-                            "Ref": "AWS::NoValue"
-                        }
-                    ]
+                    "Enabled": {
+                        "Fn::If": [
+                            "EncryptionAtRestYes",
+                            {
+                                "Ref": "EncryptionAtRest"
+                            },
+                            {
+                                "Ref": "AWS::NoValue"
+                            }
+                        ]
+                    },
+                    "KmsKeyId": {
+                        "Fn::If": [
+                            "EncryptionAtRestYes",
+                            {
+                                "Ref": "KmsKey"
+                            },
+                            {
+                                "Ref": "AWS::NoValue"
+                            }
+                        ]
+                    }
                 },
                 "NodeToNodeEncryptionOptions": {
                     "Enabled": {
@@ -494,11 +472,6 @@
                     "ElasticsearchDomain",
                     "DomainEndpoint"
                 ]
-            }
-        },
-        "SecurityGroupId": {
-            "Value": {
-                "Ref": "SecurityGroup"
             }
         }
     }
