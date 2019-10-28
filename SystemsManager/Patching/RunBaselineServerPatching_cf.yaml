@@ -1,5 +1,77 @@
 AWSTemplateFormatVersion: 2010-09-09
 Description: Template to create Windows Server Patching Maintenace Window, Targets and Tasks. Use Default Values for quick completion - Add your own values for customization.
+
+Metadata:
+  License: Apache-2.0
+  Author: Dennis Christilaw
+  URL: https://github.com/Talderon/AWS_CloudFormation
+  AWS::CloudFormation::Interface:
+    ParameterGroups:
+      -
+        Label:
+          default: "Maintenance Window Configuration"
+        Parameters:
+          - MaintenanceWindowName
+          - MaintenanceWindowDescription
+          - MaintenanceWindowSchedule
+          - MaintenanceWindowDuration
+          - MaintenanceWindowCutoff
+          - MainteanceWindowTimezone
+      -
+        Label:
+          default: "Maintenance Target Configuration"
+        Parameters:
+          - MaintenanceTargetName
+          - MaintenanceTargetDescription
+          - MaintenanceTargetTarget
+          - MaintenaneTargetKeyValue
+      -
+        Label:
+          default: "Maintenance Target Run Command Configuration"
+        Parameters:
+          - MaintenanceWindowRunCommandTaskName
+          - MaintenanceWindowRunCommandTaskPriority
+          - MaintenanceWindowRunCommandTaskMaxConcurrency
+          - MaintenanceWindowRunCommandTaskMaxErrors
+          - MaintenanceTargetSNSARN
+          - MaintenanceRunCommandS3Bucket
+          - MaintenanceRunCommandS3BucketPrefix
+    ParameterLabels:
+      MaintenanceWindowName:
+        default: "Maintenance Window Name (lowecase, no spaces)"
+      MaintenanceWindowDescription:
+        default: "Maintenance Window Description (128 char max)"
+      MainteanceWindowTimezone:
+        default: "Timezone format as found here: https://docs.aws.amazon.com/redshift/latest/dg/time-zone-names.html"
+      MaintenanceWindowDuration:
+        default: "Maintenance Window Duration (in hours)"
+      MaintenanceWindowCutoff:
+        default: "Maintenance Window Cutoff (in hours before window closes)"
+      MaintenanceWindowSchedule:
+        default: "Maintenance Window Schedule"
+      MaintenanceTargetName:
+        default: "Maintenance Target Config Name (lowercase, no spaces)"
+      MaintenanceTargetDescription:
+        default: "Maintenance Target Config Description (128 char max)"
+      MaintenanceTargetTarget:
+        default: "Maintenance Target Tag Key (format: tag:{keyName})"
+      MaintenaneTargetKeyValue:
+        default: "Maintenance Target Key Value"
+      MaintenanceWindowRunCommandTaskName:
+        default: "Run Command Name (lowercase, no spaces)"
+      MaintenanceWindowRunCommandTaskPriority:
+        default: "Run Command Task Priority"      
+      MaintenanceWindowRunCommandTaskMaxConcurrency:
+        default: "Run Command Max Concurrency"
+      MaintenanceWindowRunCommandTaskMaxErrors:
+        default: "Run Command Max Error Rate" 
+      MaintenanceTargetSNSARN:
+        default: "ARN of the SNS Topic to send notifications through"
+      MaintenanceRunCommandS3Bucket:
+        default: S3 Bucket Name to store logs
+      MaintenanceRunCommandS3BucketPrefix:
+        default: S3 Bucket prefix to assign logs for this job
+
 Parameters:
   MaintenanceWindowName:
     Description: Maintenace Window Name
@@ -119,74 +191,3 @@ Resources:
       MaxConcurrency: !Ref MaintenanceWindowRunCommandTaskMaxConcurrency
       MaxErrors: !Ref MaintenanceWindowRunCommandTaskMaxErrors
       Name: !Ref MaintenanceWindowRunCommandTaskName
-
-Metadata:
-  License: Apache-2.0
-  Author: Dennis Christilaw
-  URL: https://github.com/Talderon/AWS_CloudFormation
-  AWS::CloudFormation::Interface:
-    ParameterGroups:
-      -
-        Label:
-          default: "Maintenance Window Configuration"
-        Parameters:
-          - MaintenanceWindowName
-          - MaintenanceWindowDescription
-          - MaintenanceWindowSchedule
-          - MaintenanceWindowDuration
-          - MaintenanceWindowCutoff
-          - MainteanceWindowTimezone
-      -
-        Label:
-          default: "Maintenance Target Configuration"
-        Parameters:
-          - MaintenanceTargetName
-          - MaintenanceTargetDescription
-          - MaintenanceTargetTarget
-          - MaintenaneTargetKeyValue
-      -
-        Label:
-          default: "Maintenance Target Run Command Configuration"
-        Parameters:
-          - MaintenanceWindowRunCommandTaskName
-          - MaintenanceWindowRunCommandTaskPriority
-          - MaintenanceWindowRunCommandTaskMaxConcurrency
-          - MaintenanceWindowRunCommandTaskMaxErrors
-          - MaintenanceTargetSNSARN
-          - MaintenanceRunCommandS3Bucket
-          - MaintenanceRunCommandS3BucketPrefix
-    ParameterLabels:
-      MaintenanceWindowName:
-        default: "Maintenance Window Name (lowecase, no spaces)"
-      MaintenanceWindowDescription:
-        default: "Maintenance Window Description (128 char max)"
-      MainteanceWindowTimezone:
-        default: "Timezone format as found here: https://docs.aws.amazon.com/redshift/latest/dg/time-zone-names.html"
-      MaintenanceWindowDuration:
-        default: "Maintenance Window Duration (in hours)"
-      MaintenanceWindowCutoff:
-        default: "Maintenance Window Cutoff (in hours before window closes)"
-      MaintenanceWindowSchedule:
-        default: "Maintenance Window Schedule"
-      MaintenanceTargetName:
-        default: "Maintenance Target Config Name (lowercase, no spaces)"
-      MaintenanceTargetDescription:
-        default: "Maintenance Target Config Description (128 char max)"
-      MaintenanceTargetTarget:
-        default: "Maintenance Target Tag Key (format: tag:{keyName})"
-      MaintenaneTargetKeyValue:
-        default: "Maintenance Target Key Value"
-      MaintenanceWindowRunCommandTaskName:
-        default: "Run Command Name (lowercase, no spaces)"
-      MaintenanceWindowRunCommandTaskPriority:
-        default: "Run Command Task Priority"      
-      MaintenanceWindowRunCommandTaskMaxConcurrency:
-        default: "Run Command Max Concurrency"
-      MaintenanceWindowRunCommandTaskMaxErrors:
-        default: "Run Command Max Error Rate" 
-      MaintenanceTargetSNSARN:
-        default: "ARN of the SNS Topic to send notifications through"
-      MaintenanceRunCommandS3Bucket:
-        default: S3 Bucket Name to store logs
-      MaintenanceRunCommandS3BucketPrefix:
-        default: S3 Bucket prefix to assign logs for this job

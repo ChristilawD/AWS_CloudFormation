@@ -1,303 +1,104 @@
+
+Flip!RubyfiJobsGithubBehind the scenes
+1
 {
+2
     "AWSTemplateFormatVersion": "2010-09-09",
+3
     "Description": "Template to create SSM Agent Update Maintenace Window, Targets and Tasks. Use Default Values for quick completion - Add your own values for customization.",
-    "Parameters": {
-        "MaintenanceWindowName": {
-            "Description": "Maintenace Window Name",
-            "Type": "String"
-        },
-        "MaintenanceWindowDescription": {
-            "Description": "Sample - Weekly (WED) Maintenance Window to update SSM Agent",
-            "Type": "String",
-            "MaxLength": "128"
-        },
-        "MainteanceWindowTimezone": {
-            "Description": "Timezone for schedule (AWS will convert to UTC) (Optional, can be removed, WIll default to UTC)",
-            "Type": "String",
-            "Default": "US/Pacific"
-        },
-        "MaintenanceWindowDuration": {
-            "Description": "How many hours the maintenance window will run from start Timezone (1-4 hrs)",
-            "Type": "Number",
-            "Default": 3,
-            "MinValue": 1,
-            "MaxValue": 4
-        },
-        "MaintenanceWindowCutoff": {
-            "Description": "How many hours before maintenance window end will new jobs not start (1-2 hrs) (Optional, can be removed)",
-            "Type": "Number",
-            "Default": 1,
-            "MinValue": 1,
-            "MaxValue": 2
-        },
-        "MaintenanceWindowSchedule": {
-            "Description": "Cron/Rate expression for schedule - Sample - cron(0 0 23 ? * WED *)",
-            "Type": "String",
-            "Default": "cron(0 0 23 ? * WED *)"
-        },
-        "MaintenanceTargetName": {
-            "Description": "Maintenace Target Name (No Spaces)",
-            "Type": "String"
-        },
-        "MaintenanceTargetDescription": {
-            "Description": "Sample - UAT Servers",
-            "Type": "String",
-            "MaxLength": "128"
-        },
-        "MaintenanceTargetTarget": {
-            "Description": "Tag Key should equal 'AgentUpdate'",
-            "Type": "String",
-            "Default": "tag:AgentUpdate"
-        },
-        "MaintenaneTargetKeyValue": {
-            "Description": "True or False",
-            "Type": "String",
-            "Default": true,
-            "AllowedValues": [
-                true,
-                false
-            ]
-        },
-        "MaintenanceWindowRunCommandTaskName": {
-            "Description": "Maintenace Window Task Name (No Spaces)",
-            "Type": "String"
-        },
-        "MaintenanceWindowRunCommandTaskPriority": {
-            "Description": "Job Priority - Number 0 - 5",
-            "Type": "Number",
-            "Default": 1,
-            "MinValue": 0,
-            "MaxValue": 5
-        },
-        "MaintenanceWindowRunCommandTaskMaxConcurrency": {
-            "Description": "Integer or Percentage",
-            "Type": "String",
-            "Default": "50%",
-            "AllowedPattern": "^([1-9][0-9]*|[1-9][0-9]%|[1-9]%|100%)$"
-        },
-        "MaintenanceWindowRunCommandTaskMaxErrors": {
-            "Description": "Integer or Percentage",
-            "Type": "String",
-            "Default": "25%",
-            "AllowedPattern": "^([1-9][0-9]*|[1-9][0-9]%|[1-9]%|100%)$"
-        },
-        "MaintenanceTargetSNSARN": {
-            "Description": "ARN of the SNS Topic to send notifications through",
-            "Type": "String"
-        },
-        "MaintenanceRunCommandS3Bucket": {
-            "Description": "S3 Bucket Name (not ARN) where you want to store logs",
-            "Type": "String"
-        },
-        "MaintenanceRunCommandS3BucketPrefix": {
-            "Description": "S3 Sub-Bucket Name (not ARN) where you want to store logs",
-            "Type": "String"
-        }
-    },
-    "Resources": {
-        "MaintenanceWindow": {
-            "Type": "AWS::SSM::MaintenanceWindow",
-            "Properties": {
-                "AllowUnassociatedTargets": false,
-                "Cutoff": {
-                    "Ref": "MaintenanceWindowCutoff"
-                },
-                "Description": {
-                    "Ref": "MaintenanceWindowDescription"
-                },
-                "Duration": {
-                    "Ref": "MaintenanceWindowDuration"
-                },
-                "Name": {
-                    "Ref": "MaintenanceWindowName"
-                },
-                "Schedule": {
-                    "Ref": "MaintenanceWindowSchedule"
-                },
-                "ScheduleTimezone": {
-                    "Ref": "MainteanceWindowTimezone"
-                }
-            }
-        },
-        "MaintenanceWindowTarget": {
-            "Type": "AWS::SSM::MaintenanceWindowTarget",
-            "Properties": {
-                "Name": {
-                    "Ref": "MaintenanceTargetName"
-                },
-                "Description": {
-                    "Ref": "MaintenanceTargetDescription"
-                },
-                "WindowId": {
-                    "Ref": "MaintenanceWindow"
-                },
-                "ResourceType": "INSTANCE",
-                "Targets": [
-                    {
-                        "Key": {
-                            "Ref": "MaintenanceTargetTarget"
-                        },
-                        "Values": [
-                            {
-                                "Ref": "MaintenaneTargetKeyValue"
-                            }
-                        ]
-                    }
-                ]
-            }
-        },
-        "MaintenanceWindowRunCommandTask": {
-            "Type": "AWS::SSM::MaintenanceWindowTask",
-            "Properties": {
-                "WindowId": {
-                    "Ref": "MaintenanceWindow"
-                },
-                "Targets": [
-                    {
-                        "Key": "WindowTargetIds",
-                        "Values": [
-                            {
-                                "Ref": "MaintenanceWindowTarget"
-                            }
-                        ]
-                    }
-                ],
-                "TaskArn": "AWS-UpdateSSMAgent",
-                "TaskType": "RUN_COMMAND",
-                "TaskInvocationParameters": {
-                    "MaintenanceWindowRunCommandParameters": {
-                        "DocumentHash": "53c06c366cf29363cdbd1c9bb6b8cf212b9172a14e763b37036c281c8880c063",
-                        "DocumentHashType": "Sha256",
-                        "NotificationConfig": {
-                            "NotificationArn": {
-                                "Ref": "MaintenanceTargetSNSARN"
-                            },
-                            "NotificationEvents": [
-                                "All"
-                            ],
-                            "NotificationType": "Command"
-                        },
-                        "OutputS3BucketName": {
-                            "Ref": "MaintenanceRunCommandS3Bucket"
-                        },
-                        "OutputS3KeyPrefix": {
-                            "Ref": "MaintenanceRunCommandS3BucketPrefix"
-                        }
-                    }
-                },
-                "Priority": {
-                    "Ref": "MaintenanceWindowRunCommandTaskPriority"
-                },
-                "MaxConcurrency": {
-                    "Ref": "MaintenanceWindowRunCommandTaskMaxConcurrency"
-                },
-                "MaxErrors": {
-                    "Ref": "MaintenanceWindowRunCommandTaskMaxErrors"
-                },
-                "Name": {
-                    "Ref": "MaintenanceWindowRunCommandTaskName"
-                }
-            }
-        }
-    },
+4
     "Metadata": {
+5
         "License": "Apache-2.0",
+6
         "Author": "Dennis Christilaw",
+7
         "URL": "https://github.com/Talderon/AWS_CloudFormation",
+8
         "AWS::CloudFormation::Interface": {
+9
             "ParameterGroups": [
+10
                 {
+11
                     "Label": {
+12
                         "default": "Maintenance Window Configuration"
+13
                     },
+14
                     "Parameters": [
+15
                         "MaintenanceWindowName",
+16
                         "MaintenanceWindowDescription",
+17
                         "MaintenanceWindowSchedule",
+18
                         "MaintenanceWindowDuration",
+19
                         "MaintenanceWindowCutoff",
+20
                         "MainteanceWindowTimezone"
+21
                     ]
+22
                 },
+23
                 {
+24
                     "Label": {
+25
                         "default": "Maintenance Target Configuration"
+26
                     },
+27
                     "Parameters": [
+28
                         "MaintenanceTargetName",
+29
                         "MaintenanceTargetDescription",
+30
                         "MaintenanceTargetTarget",
+31
                         "MaintenaneTargetKeyValue"
+32
                     ]
+33
                 },
+34
                 {
+35
                     "Label": {
+36
                         "default": "Maintenance Target Run Command Configuration"
+37
                     },
+38
                     "Parameters": [
+39
                         "MaintenanceWindowRunCommandTaskName",
+40
                         "MaintenanceWindowRunCommandTaskPriority",
+41
                         "MaintenanceWindowRunCommandTaskMaxConcurrency",
+42
                         "MaintenanceWindowRunCommandTaskMaxErrors",
+43
                         "MaintenanceTargetSNSARN",
+44
                         "MaintenanceRunCommandS3Bucket",
+45
                         "MaintenanceRunCommandS3BucketPrefix"
+46
                     ]
+47
                 }
+48
             ],
+49
             "ParameterLabels": {
+50
                 "MaintenanceWindowName": {
-                    "default": "Maintenance Window Name (lowecase, no spaces)"
-                },
-                "MaintenanceWindowDescription": {
-                    "default": "Maintenance Window Description (128 char max)"
-                },
-                "MainteanceWindowTimezone": {
-                    "default": "Timezone format as found here: https://docs.aws.amazon.com/redshift/latest/dg/time-zone-names.html"
-                },
-                "MaintenanceWindowDuration": {
-                    "default": "Maintenance Window Duration (in hours)"
-                },
-                "MaintenanceWindowCutoff": {
-                    "default": "Maintenance Window Cutoff (in hours before window closes)"
-                },
-                "MaintenanceWindowSchedule": {
-                    "default": "Maintenance Window Schedule"
-                },
-                "MaintenanceTargetName": {
-                    "default": "Maintenance Target Config Name (lowercase, no spaces)"
-                },
-                "MaintenanceTargetDescription": {
-                    "default": "Maintenance Target Config Description (128 char max)"
-                },
-                "MaintenanceTargetTarget": {
-                    "default": "Maintenance Target Tag Key (format: tag:{keyName})"
-                },
-                "MaintenaneTargetKeyValue": {
-                    "default": "Maintenance Target Key Value"
-                },
-                "MaintenanceWindowRunCommandTaskName": {
-                    "default": "Run Command Name (lowercase, no spaces)"
-                },
-                "MaintenanceWindowRunCommandTaskPriority": {
-                    "default": "Run Command Task Priority"
-                },
-                "MaintenanceWindowRunCommandTaskMaxConcurrency": {
-                    "default": "Run Command Max Concurrency"
-                },
-                "MaintenanceWindowRunCommandTaskMaxErrors": {
-                    "default": "Run Command Max Error Rate"
-                },
-                "MaintenanceTargetSNSARN": {
-                    "default": "ARN of the SNS Topic to send notifications through"
-                },
-                "MaintenanceRunCommandS3Bucket": {
-                    "default": "S3 Bucket Name to store logs"
-                },
-                "MaintenanceRunCommandS3BucketPrefix": {
-                    "default": "S3 Bucket prefix to assign logs for this job"
-                }
-            }
-        }
-    }
-}
+Written by Dennis Vink, AWS Cloud Consultant at Binx.
+Original cfn-flip CLI tool created by Steve Engledow. Github: https://github.com/awslabs/aws-cfn-template-flip
