@@ -2,9 +2,6 @@
     "AWSTemplateFormatVersion": "2010-09-09",
     "Description": "**NOTE** In order to create Elastisearch Domain in AWS using CloudFormation verify you have the following Service Role created in IAM!! -- AWSServiceRoleForAmazonElasticsearchService -- If you do not have this Role, create it using the following CLi Command --  aws iam create-service-linked-role --aws-service-name es.amazonaws.com",
     "Metadata": {
-        "License": "Apache-2.0",
-        "Author": "Dennis Christilaw",
-        "URL": "https://github.com/Talderon/AWS_CloudFormation",
         "AWS::CloudFormation::Interface": {
             "ParameterGroups": [
                 {
@@ -54,6 +51,16 @@
                         "SubNet1",
                         "SubNet2",
                         "SecurityGroup"
+                    ]
+                },
+                {
+                    "Label": {
+                        "default": "Encryption Settings"
+                    },
+                    "Parameters": [
+                        "EncryptionAtRest",
+                        "KmsKey",
+                        "NodetoNode"
                     ]
                 },
                 {
@@ -110,6 +117,15 @@
                 },
                 "SnapShotHour": {
                     "default": "Set the hour to run the Automated Snapshot (0-23) (Default: UTC Timezone)"
+                },
+                "EncryptionAtRest": {
+                    "default": "Enable Encryption at Rest"
+                },
+                "KmsKey": {
+                    "default": "If Encryption at Rest is enabled, supply the KMS Key used for encryption"
+                },
+                "NodetoNode": {
+                    "default": "Enable Node to Node Encryption"
                 }
             }
         }
@@ -315,6 +331,27 @@
                 true,
                 false
             ]
+        },
+        "EncryptionAtRest": {
+            "Description": "True or False",
+            "Type": "String",
+            "Default": false,
+            "AllowedValues": [
+                true,
+                false
+            ]
+        },
+        "KmsKey": {
+            "Type": "String"
+        },
+        "NodetoNode": {
+            "Description": "True or False",
+            "Type": "String",
+            "Default": false,
+            "AllowedValues": [
+                true,
+                false
+            ]
         }
     },
     "Conditions": {
@@ -322,6 +359,14 @@
             "Fn::Equals": [
                 {
                     "Ref": "DedicatedMaster"
+                },
+                true
+            ]
+        },
+        "EncryptionAtRestYes": {
+            "Fn::Equals": [
+                {
+                    "Ref": "EncryptionAtRest"
                 },
                 true
             ]
@@ -421,6 +466,33 @@
                             "Ref": "SecurityGroup"
                         }
                     ]
+                },
+                "EncryptionAtRestOptions": {
+                    "Fn::If": [
+                        "EncryptionAtRestYes",
+                        {
+                            "Ref": "EncryptionAtRest"
+                        },
+                        {
+                            "Ref": "AWS::NoValue"
+                        }
+                    ]
+                },
+                "KmsKeyId": {
+                    "Fn::If": [
+                        "EncryptionAtRestYes",
+                        {
+                            "Ref": "KmsKey"
+                        },
+                        {
+                            "Ref": "AWS::NoValue"
+                        }
+                    ]
+                },
+                "NodeToNodeEncryptionOptions": {
+                    "Enabled": {
+                        "Ref": "NodetoNode"
+                    }
                 }
             }
         }

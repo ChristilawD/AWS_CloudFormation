@@ -49,6 +49,13 @@ Metadata:
           - GroupDescription
       -
         Label:
+          default: "Encryption Settings"
+        Parameters:
+          - EncryptionAtRest
+          - KmsKey
+          - NodetoNode
+      -
+        Label:
           default: "IAM User Restriction Policy"
         Parameters:
           - IamUserArn
@@ -85,6 +92,12 @@ Metadata:
         default: "Enable Zone Awareness (Availability Zone Replication) (recommended)"
       SnapShotHour:
         default: "Set the hour to run the Automated Snapshot (0-23) (Default: UTC Timezone)"
+      EncryptionAtRest:
+        default: "Enable Encryption at Rest"
+      KmsKey:
+        default: "If Encryption at Rest is enabled, supply the KMS Key used for encryption"
+      NodetoNode:
+        default: "Enable Node to Node Encryption"
 
 Parameters:
   DomainName:
@@ -179,8 +192,25 @@ Parameters:
     AllowedValues:
       - True
       - False
-Conditions: # Checks to see if Dedicated Master is True
+  EncryptionAtRest:
+    Description: True or False
+    Type: String
+    Default: False
+    AllowedValues:
+      - True
+      - False
+  KmsKey:
+    Type: String
+  NodetoNode:
+    Description: True or False
+    Type: String
+    Default: False
+    AllowedValues:
+      - True
+      - False
+Conditions: # Checks to see if Conditional Values are True
   DedicatedMasterYes: !Equals [ !Ref DedicatedMaster, True]
+  EncryptionAtRestYes: !Equals [ !Ref EncryptionAtRest, True]
 
 Resources:
   ElasticsearchDomain:
@@ -221,6 +251,12 @@ Resources:
           - !Ref SubNet2
         SecurityGroupIds:
           - !Ref mySecurityGroup
+      EncryptionAtRestOptions: # If Encryption At Rest is True, then use !Ref, if not, use NoValue (NULL) for both settings below
+          !If [EncryptionAtRestYes, !Ref EncryptionAtRest, !Ref "AWS::NoValue"]
+      KmsKeyId:
+          !If [EncryptionAtRestYes, !Ref KmsKey, !Ref "AWS::NoValue"]
+      NodeToNodeEncryptionOptions:
+        Enabled: !Ref NodetoNode
   mySecurityGroup:
     Type: AWS::EC2::SecurityGroup
     Properties:

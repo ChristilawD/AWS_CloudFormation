@@ -59,6 +59,16 @@
                 },
                 {
                     "Label": {
+                        "default": "Encryption Settings"
+                    },
+                    "Parameters": [
+                        "EncryptionAtRest",
+                        "KmsKey",
+                        "NodetoNode"
+                    ]
+                },
+                {
+                    "Label": {
                         "default": "IAM User Restriction Policy"
                     },
                     "Parameters": [
@@ -114,6 +124,15 @@
                 },
                 "SnapShotHour": {
                     "default": "Set the hour to run the Automated Snapshot (0-23) (Default: UTC Timezone)"
+                },
+                "EncryptionAtRest": {
+                    "default": "Enable Encryption at Rest"
+                },
+                "KmsKey": {
+                    "default": "If Encryption at Rest is enabled, supply the KMS Key used for encryption"
+                },
+                "NodetoNode": {
+                    "default": "Enable Node to Node Encryption"
                 }
             }
         }
@@ -326,6 +345,27 @@
                 true,
                 false
             ]
+        },
+        "EncryptionAtRest": {
+            "Description": "True or False",
+            "Type": "String",
+            "Default": false,
+            "AllowedValues": [
+                true,
+                false
+            ]
+        },
+        "KmsKey": {
+            "Type": "String"
+        },
+        "NodetoNode": {
+            "Description": "True or False",
+            "Type": "String",
+            "Default": false,
+            "AllowedValues": [
+                true,
+                false
+            ]
         }
     },
     "Conditions": {
@@ -333,6 +373,14 @@
             "Fn::Equals": [
                 {
                     "Ref": "DedicatedMaster"
+                },
+                true
+            ]
+        },
+        "EncryptionAtRestYes": {
+            "Fn::Equals": [
+                {
+                    "Ref": "EncryptionAtRest"
                 },
                 true
             ]
@@ -432,6 +480,33 @@
                             "Ref": "mySecurityGroup"
                         }
                     ]
+                },
+                "EncryptionAtRestOptions": {
+                    "Fn::If": [
+                        "EncryptionAtRestYes",
+                        {
+                            "Ref": "EncryptionAtRest"
+                        },
+                        {
+                            "Ref": "AWS::NoValue"
+                        }
+                    ]
+                },
+                "KmsKeyId": {
+                    "Fn::If": [
+                        "EncryptionAtRestYes",
+                        {
+                            "Ref": "KmsKey"
+                        },
+                        {
+                            "Ref": "AWS::NoValue"
+                        }
+                    ]
+                },
+                "NodeToNodeEncryptionOptions": {
+                    "Enabled": {
+                        "Ref": "NodetoNode"
+                    }
                 }
             }
         },
