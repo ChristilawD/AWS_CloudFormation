@@ -75,4 +75,8 @@ Multiple Templates here:
 
 ### ElasticSearchService_ExistingInfra_cf.yaml/json
 
-* is template will use existing VPC, SubNets and SecurityGroup. No New Infra is built outside the Search Domain infra.
+* This template will use existing VPC, SubNets and SecurityGroup. No New Infra is built outside the Search Domain infra.
+
+### ElasticSearchService_cf_ssm.yaml/json
+
+* This template uses Paramter Store values from Systems Manager - See Wiki for details.
