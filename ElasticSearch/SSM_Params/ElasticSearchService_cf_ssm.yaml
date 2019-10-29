@@ -213,7 +213,7 @@ Resources:
           - '{{resolve:ssm:websubnet1:1}}'
           - '{{resolve:ssm:websubnet2:1}}'
         SecurityGroupIds:
-          - '{{resolve:ssm:ddwa-https-access:1}}'
+          - '{{resolve:ssm:https-access:1}}'
       EncryptionAtRestOptions: # If Encryption At Rest is True, then use !Ref, if not, use NoValue (NULL) for both settings (EncryptionAtRestOptions and KmsKeyId) - Suggest enabled for additional security
         Enabled:
           !If [EncryptionAtRestYes, !Ref EncryptionAtRest, !Ref "AWS::NoValue"]
