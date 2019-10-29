@@ -195,9 +195,9 @@ Resources:
            Condition:
               IpAddress:
                 aws:SourceIp:
-                  - 173.227.225.196/32
-                  - 173.227.225.195/32
-                  - 64.124.194.4/32
+                  - 0.0.0.0/32
+                  - 1.1.1.1/32
+                  - 2.2.2.2/32
            Resource: "*"
       AdvancedOptions: # BOTH of these settingsd are REQUIRED (regardless of what the documentation states) - Bug filed: https://forums.aws.amazon.com/thread.jspa?messageID=768527
         rest.action.multi.allow_explicit_index: 'true'
