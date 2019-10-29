@@ -25,6 +25,10 @@ If you are going to remove Optional items from the template, be sure you remove 
 
 For tempalte validation, I use cfn-lint (https://pypi.org/project/cfn-lint/) as well as CloudFormations Template Validator (using Design View). Also, **ALL** of these templates have been validated/tested and known to be working in my environment. If you have issues, please open an issue and provide as much details as possible for me to help troubleshoot.
 
+# Comments in Templates
+
+Please note that only the YAML templates have comments in them. I use a converter to convert from YAML to JSON (and I do test the JSON files) and it strips the comments from them. If you have any questrions, and you use the JSON tempaltes, best to look at the YAML templates and the Wiki to see if you can get the information needed. If you cannot find the information, open an issue and I will try and get it fixed/answered for you. Thanks!
+
 # Templates
 
 ## SSMAgent_cf.yaml
