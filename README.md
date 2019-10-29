@@ -58,6 +58,8 @@ This Maintnance Window runs the following Document: **AWS-RunPatchBaseline**
 #### Validated and Tested
 #### Wiki page created
 
+### Public Templates are still a Work In Progress, use at your own risk. I am working through a few things and will update ASAP. VPC Templates are solid.
+
 **NOTE** In order to create Elastisearch Domain in AWS using CloudFormation verify you have the following Service Role created in IAM!!
 
 AWSServiceRoleForAmazonElasticsearchService
