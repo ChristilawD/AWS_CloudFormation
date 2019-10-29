@@ -418,8 +418,8 @@
                 },
                 "VPCOptions": {
                     "SubnetIds": [
-                        "{{resolve:ssm:sharedsubnet1:1}}",
-                        "{{resolve:ssm:sharedsubnet2:1}}"
+                        "{{resolve:ssm:websubnet1:1}}",
+                        "{{resolve:ssm:websubnet2:1}}"
                     ],
                     "SecurityGroupIds": [
                         "{{resolve:ssm:ddwa-https-access:1}}"

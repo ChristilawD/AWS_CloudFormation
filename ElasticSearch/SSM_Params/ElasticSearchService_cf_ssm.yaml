@@ -210,8 +210,8 @@ Resources:
         indices.fielddata.cache.size: !Ref "AWS::NoValue" # You can change this value: Specifies the percentage of Java heap space that is allocated to field data. By default, this setting is unbounded
       VPCOptions:
         SubnetIds:
-          - '{{resolve:ssm:sharedsubnet1:1}}'
-          - '{{resolve:ssm:sharedsubnet2:1}}'
+          - '{{resolve:ssm:websubnet1:1}}'
+          - '{{resolve:ssm:websubnet2:1}}'
         SecurityGroupIds:
           - '{{resolve:ssm:ddwa-https-access:1}}'
       EncryptionAtRestOptions: # If Encryption At Rest is True, then use !Ref, if not, use NoValue (NULL) for both settings (EncryptionAtRestOptions and KmsKeyId) - Suggest enabled for additional security
