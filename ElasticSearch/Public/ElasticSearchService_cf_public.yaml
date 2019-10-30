@@ -60,7 +60,7 @@ Metadata:
       StorageSize:
         default: "Storage Size in GB"
       ZoneAwareness:
-        default: "Enable Zone Awareness (Availability Zone Replication) (recommended)"
+        default: "Enable Zone Awareness (Availability Zone Replication) (recommended) - Requires 2 or more instances if enabled!"
       SnapShotHour:
         default: "Set the hour to run the Automated Snapshot (0-23) (Default: UTC Timezone)"
       EncryptionAtRest:
@@ -103,7 +103,7 @@ Parameters:
   DataInstanceCount:
     Type: Number
     Default: 2
-    AllowedValues: [2, 4, 6, 8, 10] # Remove this line for free-form number entry
+    AllowedValues: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10] # Remove this line for free-form number entry
   MasterInstanceType:
     Type: String
     Default: r5.large.elasticsearch
@@ -142,14 +142,14 @@ Parameters:
     AllowedValues:
       - True
       - False
-  EncryptionAtRest:
+  EncryptionAtRest: # KMS Key is required if this is True
     Description: True or False
     Type: String
     Default: True
     AllowedValues:
       - True
       - False
-  KmsKey: # Required if above stays True
+  KmsKey: # Required if above is True
     Type: String
   NodetoNode:
     Description: True or False
@@ -195,16 +195,17 @@ Resources:
            Condition:
               IpAddress:
                 aws:SourceIp:
-                  - 0.0.0.0/32
-                  - 1.1.1.1/32
-                  - 2.2.2.2/32
+                  - 173.227.225.196/32
+                  - 173.227.225.195/32
+                  - 64.124.194.4/32
            Resource: "*"
       AdvancedOptions: # BOTH of these settingsd are REQUIRED (regardless of what the documentation states) - Bug filed: https://forums.aws.amazon.com/thread.jspa?messageID=768527
         rest.action.multi.allow_explicit_index: 'true'
         indices.fielddata.cache.size: !Ref "AWS::NoValue" # You can change this value: Specifies the percentage of Java heap space that is allocated to field data. By default, this setting is unbounded
       EncryptionAtRestOptions: # If Encryption At Rest is True, then use !Ref, if not, use NoValue (NULL) for both settings (EncryptionAtRestOptions and KmsKeyId) - Suggest enabled for additional security
+        Enabled:
           !If [EncryptionAtRestYes, !Ref EncryptionAtRest, !Ref "AWS::NoValue"]
-      KmsKeyId:
+        KmsKeyId:
           !If [EncryptionAtRestYes, !Ref KmsKey, !Ref "AWS::NoValue"]
       NodeToNodeEncryptionOptions: # Defaults to True
         Enabled: !Ref NodetoNode
