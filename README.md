@@ -58,8 +58,6 @@ This Maintnance Window runs the following Document: **AWS-RunPatchBaseline**
 #### Validated and Tested
 #### Wiki page created
 
-### Public Templates are still a Work In Progress, use at your own risk. I am working through a few things and will update ASAP. VPC Templates are solid.
-
 **NOTE** In order to create Elastisearch Domain in AWS using CloudFormation verify you have the following Service Role created in IAM!!
 
 AWSServiceRoleForAmazonElasticsearchService
@@ -73,6 +71,8 @@ If you do not have this Role, create it using the following CLi Command:
 * No issues at this time
 
 Multiple Templates here:
+
+## Creates inside VPC
 
 ### ElasticSearchService_cf.yaml/json
 
@@ -89,3 +89,10 @@ Multiple Templates here:
 ### ElasticSearchService_cf_ssm.yaml/json
 
 * This template uses Paramter Store values from Systems Manager - See Wiki for details.
+
+## Public Access Domain
+
+### ElasticSearchService_cf_public.yaml/json
+
+* This template will create an ElasticSearch Domain with Public Access
+* This tempalte also restricts access via IP Addresses
