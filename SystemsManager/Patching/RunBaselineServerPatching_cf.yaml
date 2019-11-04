@@ -177,7 +177,7 @@ Resources:
       TaskArn: AWS-RunPatchBaseline
       TaskType: RUN_COMMAND
       TaskInvocationParameters:
-        MaintenanceWindowRunCommandParameters:
+        MaintenanceWindowRunCommandParameters: # This value tends to not change from Account to Account unless it is updated by AWS. You can verify it here: AWS Systems Manager/Documents/Document Name: AWS-RunPatchBaseline
           DocumentHash: 945ae15356b0f6ba7bce2a738101b8822cedef3bf5c027abc3bb9023aaec8b1b
           DocumentHashType: Sha256
           NotificationConfig:
