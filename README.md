@@ -3,6 +3,8 @@ Various AWS CloudFormation Scripts that I have created.
 
 # Detailed Documentation is in the Wiki! :)
 https://github.com/Talderon/AWS_CloudFormation/wiki
+
+There have been a lot of updates in tghe Wiki that are not just CloudFormation docs, some info on AWS ElasticSearch Service has been added as well as some other helpful bits. Please check them out and let me know if they help or are confusing or what. Feedback Please!!!
 ### License: This repo is licensed under the Apache 2.0 license, please be respectful. Thanks!
 
 I am creating this repo because I am having a very hard time finding CF Templates for some "edge case" templates that aren't as popular and used as much. I am also tired of looking on sites where peole state "Hey, I got my template working" and then refuse to share what they have put together.
