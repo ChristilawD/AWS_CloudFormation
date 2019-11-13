@@ -57,6 +57,18 @@ This Maintnance Window runs the following Document: **AWS-RunPatchBaseline**
 
 * ~~Template error when using S3 Logging section #2~~ **Resolved**
 
+## cognito.yaml
+#### NOT Validated and Tested
+#### Wiki page created (empty)
+
+**NOTE** At this time, this template has not been completed or tested. I uploaded it here for backup/storage.
+
+* This is meant to me an inclusive template. You can pick it apart and use what parts you need. 
+
+### Current Issues
+
+* No issues at this time
+
 ## ElasticSearchService_*_cf.yaml
 #### Validated and Tested
 #### Wiki page created
