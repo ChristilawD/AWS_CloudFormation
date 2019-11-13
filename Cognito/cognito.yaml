@@ -1,0 +1,280 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: >-
+  This Cloudformation Template is used to create an Incognito Identity Pool for
+  Kibana for the ElasticSearch Service Domain (can be modified and used for other
+  services as well. This will be as complete as possible).
+  Validation Parameters used -
+   First Name
+   Family (Last) Name
+   Email Address
+  You can always add more to the template if you need more constraints.
+
+Metadata:
+  License: Apache-2.0
+  Author: Dennis Christilaw
+  URL: https://github.com/Talderon/AWS_CloudFormation
+  AWS::CloudFormation::Interface:
+    ParameterGroups:
+      -
+        Label:
+          default: "Cognito Resource Names"
+        Parameters:
+          - UserPoolName
+          - ClientName
+          - IdentityPoolName
+      -
+        Lavel:
+          default: "User Account Attributes"
+        Parameters:
+          - UsernameAttributes
+          - AutoVerifiedAttributes
+      -
+        Label:
+          default: "Password Policy"
+        Parameters:
+          - MinimumLength
+          - RequireLowercase
+          - RequireNumbers
+          - RequireSymbols
+          - RequireUppercase
+          - TemporaryPasswordValidityDays
+      -
+        Label:
+          default: "User Creation Configuration"
+        Parameters:
+          - AllowAdminCreateUserOnly
+          - AllowUnauthenticatedIdentities
+
+    ParameterLabels:
+      UserPoolName:
+        default: "A unique name for the User Pool (3-128)"
+      ClientName:
+        default: "A unique name for the User Pool Client (3-128)"
+      IdentityPoolName:
+        default: "A unique name for the Identiy Pool (3-128)"
+      MinimumLength:
+        default: "Password - Minimum Length (8-30)"
+      RequireLowercase:
+        default: "Password - Require Lowercase (TRUE/Fale)"
+      RequireNumbers:
+        default: "Password - Require Numbers (TRUE/Fale)"
+      RequireSymbols:
+        default: "Password - Require Sumbols (TRUE/Fale)"
+      RequireUppercase:
+        default: "Password - Require UpperCase (TRUE/Fale)"
+      TemporaryPasswordValidityDays:
+        default: "Password - Number of days Temorary Password is valid (7-14 days)"
+      AllowAdminCreateUserOnly:
+        default: "Allow only Admins to create accounts (TRUE/False)"
+      AllowUnauthenticatedIdentities:
+        default: "Specifies whether the identity pool supports unauthenticated logins (True/FALSE)"
+      UsernameAttributes:
+        default: "Username Attribute - Email Address or Phone Number"
+      AutoVerifiedAttributes:
+        default: "Verification Method - Email Address or Phone Number (Requires SMS abilities which incurr additional costs)"
+
+Parameters:
+  UserPoolName:
+    Type: String
+    MinLength: 3
+    MaxLength: 128
+    AllowedPattern: ^\w+$
+  ClientName:
+    Type: String
+    MinLength: 3
+    MaxLength: 128
+    AllowedPattern: ^\w+$
+  IdentityPoolName:
+    Type: String
+    MinLength: 3
+    MaxLength: 128
+    AllowedPattern: ^\w+$
+  MinimumLength:
+    Type: Number
+    Default: 12
+    MinValue: 8
+    MaxValue: 30
+  RequireLowercase:
+    Type: String
+    Default: True
+    AllowedValues:
+      - True
+      - False
+  RequireNumbers:
+    Type: String
+    Default: True
+    AllowedValues:
+      - True
+      - False
+  RequireSymbols:
+    Type: String
+    Default: True
+    AllowedValues:
+      - True
+      - False
+  RequireUppercase:
+    Type: String
+    Default: True
+    AllowedValues:
+      - True
+      - False
+  TemporaryPasswordValidityDays:
+    Type: Number
+    Default: 7
+    MinValue: 7
+    MaxValue: 14
+  AllowAdminCreateUserOnly:
+    Type: String
+    Default: True
+    AllowedValues:
+      - True
+      - False
+  AllowUnauthenticatedIdentities:
+    Type: String
+    Default: False
+    AllowedValues:
+      - True
+      - False
+  UsernameAttributes:
+    Type: String
+    Default: email
+    AllowedValues:
+      - email
+      - phone_number
+  AutoVerifiedAttributes:
+    Type: String
+    Default: email
+    AllowedValues:
+      - email
+      - phone_number
+
+Resources:
+  # Creates a user pool in cognito for your app to auth against
+  UserPool:
+    Type: "AWS::Cognito::UserPool"
+    Properties:
+      UserPoolName: !Ref UserPoolName
+      AdminCreateUserConfig:
+        AllowAdminCreateUserOnly: !Ref AllowAdminCreateUserOnly
+      UsernameAttributes: !Ref UsernameAttributes
+      AutoVerifiedAttributes: !Ref AutoVerifiedAttributes
+      MfaConfiguration: "OFF"
+      Schema:
+        - Name: name
+          AttributeDataType: String
+          Mutable: true
+          Required: true
+        - Name: family_name
+          AttributeDataType: String
+          Mutable: true
+          Required: true
+        - Name: email
+          AttributeDataType: String
+          Mutable: false
+          Required: true
+      Policies:
+        PasswordPolicy:
+          MinimumLength: !Ref MinimumLength
+          RequireLowercase: !Ref RequireLowercase
+          RequireNumbers: !Ref RequireNumbers
+          RequireSymbols: !Ref RequireSymbols
+          RequireUppercase: !Ref RequireUppercase
+          TemporaryPasswordValidityDays: !Ref TemporaryPasswordValidityDays
+    # Creates a User Pool Client to be used by the identity pool
+  UserPoolClient:
+    Type: "AWS::Cognito::UserPoolClient"
+    Properties:
+      ClientName: !Ref ClientName
+      GenerateSecret: false
+      UserPoolId: !Ref UserPool
+    # Creates a federeated Identity pool
+  IdentityPool:
+    Type: "AWS::Cognito::IdentityPool"
+    Properties:
+      IdentityPoolName: !Ref IdentityPoolName
+      AllowUnauthenticatedIdentities: !Ref AllowUnauthenticatedIdentities
+      CognitoIdentityProviders: 
+        - ClientId: !Ref UserPoolClient
+          ProviderName: !GetAtt UserPool.ProviderName
+  # Create a role for unauthorized acces to AWS resources. Very limited access. Only allows users in the previously created Identity Pool
+  CognitoUnAuthorizedRole:
+    Type: "AWS::IAM::Role"
+    Properties:
+      AssumeRolePolicyDocument: 
+        Version: "2012-10-17"
+        Statement:
+          - Effect: "Allow"
+            Principal: 
+              Federated: "cognito-identity.amazonaws.com"
+            Action: 
+              - "sts:AssumeRoleWithWebIdentity"
+            Condition:
+              StringEquals: 
+                "cognito-identity.amazonaws.com:aud": !Ref IdentityPool
+              "ForAnyValue:StringLike":
+                "cognito-identity.amazonaws.com:amr": unauthenticated
+      Policies:
+        - PolicyName: "CognitoUnauthorizedPolicy"
+          PolicyDocument: 
+            Version: "2012-10-17"
+            Statement: 
+              - Effect: "Allow"
+                Action:
+                  - "mobileanalytics:PutEvents"
+                  - "cognito-sync:*"
+                Resource: "*"
+  # Create a role for authorized acces to AWS resources. Control what your user can access. This example only allows Lambda invokation
+  # Only allows users in the previously created Identity Pool
+  CognitoAuthorizedRole:
+    Type: "AWS::IAM::Role"
+    Properties:
+      AssumeRolePolicyDocument: 
+        Version: "2012-10-17"
+        Statement:
+          - Effect: "Allow"
+            Principal: 
+              Federated: "cognito-identity.amazonaws.com"
+            Action: 
+              - "sts:AssumeRoleWithWebIdentity"
+            Condition:
+              StringEquals: 
+                "cognito-identity.amazonaws.com:aud": !Ref IdentityPool
+              "ForAnyValue:StringLike":
+                "cognito-identity.amazonaws.com:amr": authenticated
+      Policies:
+        - PolicyName: "CognitoAuthorizedPolicy"
+          PolicyDocument: 
+            Version: "2012-10-17"
+            Statement: 
+              - Effect: "Allow"
+                Action:
+                  - "mobileanalytics:PutEvents"
+                  - "cognito-sync:*"
+                  - "cognito-identity:*"
+                Resource: "*"
+              - Effect: "Allow"
+                Action:
+                  - "lambda:InvokeFunction"
+                Resource: "*"
+    # Assigns the roles to the Identity Pool
+  IdentityPoolRoleMapping:
+    Type: "AWS::Cognito::IdentityPoolRoleAttachment"
+    Properties:
+      IdentityPoolId: !Ref IdentityPool
+      Roles:
+        authenticated: !GetAtt CognitoAuthorizedRole.Arn
+        unauthenticated: !GetAtt CognitoUnAuthorizedRole.Arn
+
+Outputs:
+  UserPoolId:
+    Value: !Ref UserPool
+    Export:
+      Name: "UserPool::Id"
+  UserPoolClientId:
+    Value: !Ref UserPoolClient
+    Export:
+      Name: "UserPoolClient::Id"
+  IdentityPoolId:
+    Value: !Ref IdentityPool
+    Export:
+      Name: "IdentityPool::Id"
