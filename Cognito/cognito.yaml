@@ -11,6 +11,9 @@ Description: >-
 
 Metadata:
   AWS::CloudFormation::Interface:
+  License: Apache-2.0
+  Author: Dennis Christilaw
+  URL: https://github.com/Talderon/AWS_CloudFormation
     ParameterGroups:
       -
         Label:
