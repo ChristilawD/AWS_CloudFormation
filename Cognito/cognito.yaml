@@ -10,9 +10,6 @@ Description: >-
   You can always add more to the template if you need more constraints.
 
 Metadata:
-  License: Apache-2.0
-  Author: Dennis Christilaw
-  URL: https://github.com/Talderon/AWS_CloudFormation
   AWS::CloudFormation::Interface:
     ParameterGroups:
       -
@@ -23,7 +20,7 @@ Metadata:
           - ClientName
           - IdentityPoolName
       -
-        Lavel:
+        Label:
           default: "User Account Attributes"
         Parameters:
           - UsernameAttributes
@@ -46,31 +43,31 @@ Metadata:
           - AllowUnauthenticatedIdentities
 
     ParameterLabels:
-      UserPoolName:
+      UserPoolName: # A string used to name the user pool
         default: "A unique name for the User Pool (3-128)"
-      ClientName:
+      ClientName: # The client name for the user pool client you would like to create
         default: "A unique name for the User Pool Client (3-128)"
-      IdentityPoolName:
+      IdentityPoolName: # The name of your Amazon Cognito identity pool
         default: "A unique name for the Identiy Pool (3-128)"
-      MinimumLength:
+      MinimumLength: # The minimum length of the password policy that you have set. Cannot be less than 6
         default: "Password - Minimum Length (8-30)"
-      RequireLowercase:
+      RequireLowercase: # In the password policy that you have set, refers to whether you have required users to use at least one lowercase letter in their password
         default: "Password - Require Lowercase (TRUE/Fale)"
-      RequireNumbers:
+      RequireNumbers: # In the password policy that you have set, refers to whether you have required users to use at least one number in their password
         default: "Password - Require Numbers (TRUE/Fale)"
-      RequireSymbols:
+      RequireSymbols: # In the password policy that you have set, refers to whether you have required users to use at least one symbol in their password
         default: "Password - Require Sumbols (TRUE/Fale)"
-      RequireUppercase:
+      RequireUppercase: # In the password policy that you have set, refers to whether you have required users to use at least one uppercase letter in their password
         default: "Password - Require UpperCase (TRUE/Fale)"
-      TemporaryPasswordValidityDays:
+      TemporaryPasswordValidityDays: # In the password policy you have set, refers to the number of days a temporary password is valid. If the user does not sign-in during this time, their password will need to be reset by an administrator
         default: "Password - Number of days Temorary Password is valid (7-14 days)"
-      AllowAdminCreateUserOnly:
+      AllowAdminCreateUserOnly: # Allows only admins to creat users in the User Pool (no self-signup if set to True)
         default: "Allow only Admins to create accounts (TRUE/False)"
-      AllowUnauthenticatedIdentities:
+      AllowUnauthenticatedIdentities: # Specifies whether the identity pool supports unauthenticated logins
         default: "Specifies whether the identity pool supports unauthenticated logins (True/FALSE)"
-      UsernameAttributes:
+      UsernameAttributes: # This sets the username as either Email or Phone Number
         default: "Username Attribute - Email Address or Phone Number"
-      AutoVerifiedAttributes:
+      AutoVerifiedAttributes: # The attributes to be auto-verified
         default: "Verification Method - Email Address or Phone Number (Requires SMS abilities which incurr additional costs)"
 
 Parameters:
@@ -156,8 +153,6 @@ Resources:
       UserPoolName: !Ref UserPoolName
       AdminCreateUserConfig:
         AllowAdminCreateUserOnly: !Ref AllowAdminCreateUserOnly
-      UsernameAttributes: !Ref UsernameAttributes
-      AutoVerifiedAttributes: !Ref AutoVerifiedAttributes
       MfaConfiguration: "OFF"
       Schema:
         - Name: name
@@ -180,14 +175,16 @@ Resources:
           RequireSymbols: !Ref RequireSymbols
           RequireUppercase: !Ref RequireUppercase
           TemporaryPasswordValidityDays: !Ref TemporaryPasswordValidityDays
-    # Creates a User Pool Client to be used by the identity pool
+      UsernameAttributes: !Ref UsernameAttributes
+      AutoVerifiedAttributes: !Ref AutoVerifiedAttributes
+  # Creates a User Pool Client to be used by the identity pool
   UserPoolClient:
     Type: "AWS::Cognito::UserPoolClient"
     Properties:
       ClientName: !Ref ClientName
       GenerateSecret: false
       UserPoolId: !Ref UserPool
-    # Creates a federeated Identity pool
+  # Creates a federeated Identity pool
   IdentityPool:
     Type: "AWS::Cognito::IdentityPool"
     Properties:
@@ -196,7 +193,12 @@ Resources:
       CognitoIdentityProviders: 
         - ClientId: !Ref UserPoolClient
           ProviderName: !GetAtt UserPool.ProviderName
-  # Create a role for unauthorized acces to AWS resources. Very limited access. Only allows users in the previously created Identity Pool
+  # ######################################################################### # 
+  # The BELOW is REQUIRED - DO NOT EDIT unless you know what you are doing!   #
+  # Create a role for unauthorized acces to AWS resources.                    #
+  # Very limited access.                                                      #
+  # ######################################################################### # 
+  # Only allows users in the previously created Identity Pool
   CognitoUnAuthorizedRole:
     Type: "AWS::IAM::Role"
     Properties:
@@ -256,7 +258,10 @@ Resources:
                 Action:
                   - "lambda:InvokeFunction"
                 Resource: "*"
-    # Assigns the roles to the Identity Pool
+  # ######################################################################### # 
+  # The ABOVE is REQUIRED - DO NOT EDIT unless you know what you are doing!   #
+  # ######################################################################### # 
+  # Assigns the roles to the Identity Pool
   IdentityPoolRoleMapping:
     Type: "AWS::Cognito::IdentityPoolRoleAttachment"
     Properties:
