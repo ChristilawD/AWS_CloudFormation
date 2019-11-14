@@ -66,7 +66,7 @@ This Maintnance Window runs the following Document: **AWS-RunPatchBaseline**
 * User Pool
 * User Pool Client
 * Federated Identity Pool
-* IAM Rol: Only allows users in the previously created Identity Pool (x2)
+* IAM Roles: Only allows users in the previously created Identity Pool (x2)
 * Assigns the IAM Roles to the Identity Pool
 
 ### Current Issues
