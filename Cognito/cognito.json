@@ -60,16 +60,16 @@
                     "default": "Password - Minimum Length (8-30)"
                 },
                 "RequireLowercase": {
-                    "default": "Password - Require Lowercase (TRUE/Fale)"
+                    "default": "Password - Require Lowercase (TRUE/False)"
                 },
                 "RequireNumbers": {
-                    "default": "Password - Require Numbers (TRUE/Fale)"
+                    "default": "Password - Require Numbers (TRUE/False)"
                 },
                 "RequireSymbols": {
-                    "default": "Password - Require Sumbols (TRUE/Fale)"
+                    "default": "Password - Require Sumbols (TRUE/False)"
                 },
                 "RequireUppercase": {
-                    "default": "Password - Require UpperCase (TRUE/Fale)"
+                    "default": "Password - Require UpperCase (TRUE/False)"
                 },
                 "TemporaryPasswordValidityDays": {
                     "default": "Password - Number of days Temorary Password is valid (7-14 days)"
