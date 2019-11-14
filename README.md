@@ -58,12 +58,16 @@ This Maintnance Window runs the following Document: **AWS-RunPatchBaseline**
 * ~~Template error when using S3 Logging section #2~~ **Resolved**
 
 ## cognito.yaml
-#### NOT Validated and Tested
+#### Validated and Tested
 #### Wiki page created (empty)
 
-**NOTE** At this time, this template has not been completed or tested. I uploaded it here for backup/storage.
+###### This tempaltes has been tested and validated. It creates the following:
 
-* This is meant to me an inclusive template. You can pick it apart and use what parts you need. 
+* User Pool
+* User Pool Client
+* Federated Identity Pool
+* IAM Rol: Only allows users in the previously created Identity Pool (x2)
+* Assigns the IAM Roles to the Identity Pool
 
 ### Current Issues
 
