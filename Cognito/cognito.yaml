@@ -78,17 +78,17 @@ Parameters:
     Type: String
     MinLength: 3
     MaxLength: 128
-    AllowedPattern: ^\w+$
+    AllowedPattern: ^[a-zA-Z0-9+_.-]+$
   ClientName:
     Type: String
     MinLength: 3
     MaxLength: 128
-    AllowedPattern: ^\w+$
+    AllowedPattern: ^[a-zA-Z0-9+_.-]+$
   IdentityPoolName:
     Type: String
     MinLength: 3
     MaxLength: 128
-    AllowedPattern: ^\w+$
+    AllowedPattern: ^[a-zA-Z0-9+_.-]+$
   MinimumLength:
     Type: Number
     Default: 12
@@ -136,13 +136,13 @@ Parameters:
       - True
       - False
   UsernameAttributes:
-    Type: String
+    Type: CommaDelimitedList
     Default: email
     AllowedValues:
       - email
       - phone_number
   AutoVerifiedAttributes:
-    Type: String
+    Type: CommaDelimitedList
     Default: email
     AllowedValues:
       - email
