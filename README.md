@@ -11,9 +11,9 @@ I am creating this repo because I am having a very hard time finding CF Template
 
 I am hoping that this collection helps someone figure out how to do what they need to get done with CloudFormation.
 
-All of these templates will come in YAML and JSON format, feel free to use either. All of these templates are originally written in YAML and then I work to convert them to JSON, if there are issue with the JSON version, please let me know, but I have better exposure to YAML.
+All of these templates will come in **YAM**L and **JSON** format, feel free to use either. All of these templates are originally written in **YAML** and then I work to convert them to **JSON**, if there are issue with the JSON version, please let me know, but I have better exposure to **YAML**.
 
-Please feel free to open issues for questions, issues or requests that come up using these. I will work to fix/update them as time allows.
+Please feel free to open issues for questions, issues or requests that come up using these. I will work to fix/update/Answer them as time allows.
 
 ## Documentation
 I will work to document these as well as I can, but please feel free to use these as needed. I will work to include a Wiki Page for each template that expands on some information needed to successfully use them.
@@ -34,7 +34,7 @@ Please note that only the YAML templates have comments in them. I use a converte
 
 # Templates
 
-## SSMAgent_cf.yaml
+## SSMAgent_cf.yaml/json
 #### Validated and Tested
 #### Wiki page created
 
@@ -45,7 +45,7 @@ This template was built to help automate (to a degree) the creation of a Systems
 * ~~SSMAgentcf.yaml - Failing on run #1~~ **Resolved**
 * ~~Template error when using S3 Logging section #2~~ **Resolved**
 
-## RunBaselineServerPatching_cf.yaml
+## RunBaselineServerPatching_cf.yaml/json
 #### Validated and Tested
 #### Wiki page created
 
@@ -57,7 +57,7 @@ This Maintnance Window runs the following Document: **AWS-RunPatchBaseline**
 
 * ~~Template error when using S3 Logging section #2~~ **Resolved**
 
-## cognito.yaml
+## cognito.yaml/json
 #### Validated and Tested
 #### Wiki page created (empty)
 
@@ -73,7 +73,7 @@ This Maintnance Window runs the following Document: **AWS-RunPatchBaseline**
 
 * No issues at this time
 
-## ElasticSearchService_*_cf.yaml
+## ElasticSearchService_*_cf.yaml/json
 #### Validated and Tested
 #### Wiki page created
 
