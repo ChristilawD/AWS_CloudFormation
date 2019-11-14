@@ -30,7 +30,7 @@ For tempalte validation, I use cfn-lint (https://pypi.org/project/cfn-lint/) as 
 
 # Comments in Templates
 
-Please note that only the YAML templates have comments in them. I use a converter to convert from YAML to JSON (and I do test the JSON files) and it strips the comments from them. If you have any questrions, and you use the JSON tempaltes, best to look at the YAML templates and the Wiki to see if you can get the information needed. If you cannot find the information, open an issue and I will try and get it fixed/answered for you. Thanks!
+Please note that only the **YAML** templates have comments in them. I use a converter to convert from **YAML** to **JSON** (and I do test the **JSON** files) and it strips the comments from them. If you have any questrions, and you use the **JSON** tempaltes, best to look at the **YAML** templates and the Wiki to see if you can get the information needed. If you cannot find the information, open an issue and I will try and get it fixed/answered for you. Thanks!
 
 # Templates
 
@@ -115,3 +115,4 @@ Multiple Templates here:
 
 * This template will create an ElasticSearch Domain with Public Access
 * This tempalte also restricts access via IP Addresses
+* You can use the Cognito Template to further secure your ElasticSearch Domain (see Cognito Wiki Page)
