@@ -113,7 +113,8 @@ Multiple Templates here:
 
 ### ElasticSearchService_cf_public.yaml/json
 
-* Check out this Wiki Page to make things more secure:[AWS ElasticSearch Service Plus Cognito](https://github.com/Talderon/AWS_CloudFormation/wiki/AWS-ElasticSearch-Service-Plus-Cognito---How-To-Put-It-All-Together)
+* Check out this Wiki Page to make things more secure: [AWS ElasticSearch Service Plus Cognito](https://github.com/Talderon/AWS_CloudFormation/wiki/AWS-ElasticSearch-Service-Plus-Cognito---How-To-Put-It-All-Together)
 * This template will create an ElasticSearch Domain with Public Access
 * This tempalte also restricts access via IP Addresses
-* You can use the Cognito Template to further secure your ElasticSearch Domain (see Cognito Wiki Page)
+* You can use the Cognito Template to further secure your ElasticSearch Domain (see Cognito Wiki Page (link in first bullet point))
+* There is a policy in the page above that shows you how to restrict by IP and Cognito as well
