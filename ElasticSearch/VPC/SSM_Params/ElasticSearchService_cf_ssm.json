@@ -422,7 +422,7 @@
                         "{{resolve:ssm:websubnet2:1}}"
                     ],
                     "SecurityGroupIds": [
-                        "{{resolve:ssm:ddwa-https-access:1}}"
+                        "{{resolve:ssm:https-access:1}}"
                     ]
                 },
                 "EncryptionAtRestOptions": {
