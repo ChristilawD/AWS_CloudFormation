@@ -1,3 +1,5 @@
+# NOTE - These are old and no longer maintained, please review before use.
+
 # AWS_CloudFormation
 Various AWS CloudFormation Scripts that I have created.
 
